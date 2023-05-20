@@ -172,11 +172,11 @@ int yyparse();
 int main(int argc, char* argv[])
 {
     yyparse();
-
+    /*
 	//Mostrando a tabela de símbolos
 	for (const Simbolo& simbolo : tabelaDeSimbolos) {
         cout<<simbolo.tipo + " " + simbolo.nome<<endl;
-    }
+    }*/
     return 0;
 }
 
