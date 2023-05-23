@@ -28,10 +28,11 @@ string gera_ID();
 void insereSimbolo(string nome, string tipo);
 bool verificaSimbolo(string nome);
 string obterTipoSimbolo(string nome);
+void imprimeVariavel();
 
 int yylex(void);
 void yyerror(string);
-vector<string> variaveis; // Vetor para armazenar as variáveis encontradas
+
 
 %}
 
@@ -53,12 +54,12 @@ vector<string> variaveis; // Vetor para armazenar as variáveis encontradas
 
 S           : TK_TIPO_INT TK_MAIN '(' ')' BLOCO
             {
-				/*/ Imprime as variáveis encontradas antes de imprimir o código gerado
-                for (const string& variavel : variaveis) {
-                    cout << variavel << endl;
-                }*/
-                cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $5.traducao << "\treturn 0;\n}" << endl;
+                cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
+                imprimeVariavel() ;
+                
+                 cout << $5.traducao << "\treturn 0;\n}" << endl;
             }
+            
             ;
 
 BLOCO       : '{' COMANDOS '}'
@@ -121,7 +122,7 @@ E           : E '+' E
             {
                 $$.tipo= "int";
                 string label = geraLabel();
-                $$.traducao = "\t" + $$.tipo + " " + label + ";\n \t" + label + " = "  + $1.traducao + ";\n";
+                $$.traducao = "\t" + label +  " = "  + $1.traducao + ";\n";
                 $$.label= label;
 
                 // Inserir o símbolo na tabela de símbolos
@@ -147,7 +148,7 @@ E           : E '+' E
                 insereSimbolo(label, $$.tipo);
                 string tipo = obterTipoSimbolo($1.label); // Obtém o tipo do símbolo da tabela de símbolos
 
-                $$.traducao = "\t" + $$.tipo + " " + label + " = "  + $1.label + ";\n";
+                $$.traducao = "\t" + $$.tipo + " " + $$.label + " = "  + $1.label + ";\n";
                 $$.label = label;
 
             }
@@ -157,7 +158,7 @@ E           : E '+' E
 				$1.tipo=$3.tipo;
 				insereSimbolo($1.label,$1.tipo);
 				string tipo=obterTipoSimbolo($1.label);
-                $$.traducao ='\t' + $1.tipo + " " +$1.label + ";\n"+ '\t'+ $3.tipo + " " + $3.label + ";\n" + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+                $$.traducao ='\t' + "\n" + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 
 		    }
             ;
@@ -172,11 +173,7 @@ int yyparse();
 int main(int argc, char* argv[])
 {
     yyparse();
-    /*
-	//Mostrando a tabela de símbolos
-	for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        cout<<simbolo.tipo + " " + simbolo.nome<<endl;
-    }*/
+
     return 0;
 }
 
@@ -193,8 +190,13 @@ string geraLabel()
 
     stringstream ss;
     ss << "T" << i++;
-
     return ss.str();
+}
+
+void imprimeVariavel(){
+    for (const Simbolo& simbolo : tabelaDeSimbolos) {
+        cout<<"\t" + simbolo.tipo + " " + simbolo.nome + "\t"<<endl;
+    }
 }
 
 void insereSimbolo(string nome, string tipo)

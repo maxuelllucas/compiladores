@@ -13,7 +13,7 @@ REAL {NUM}+("."{NUM}+)?
 CHAR \'({LETRA}|{NUM})\'
 ID {LETRA}({LETRA}|{NUM})*
 OPERADOR("+"|"-"|"*"|"*")
-EXPRESSAO ({ID}{NUM})({OPERADOR}({ID}{NUM}))+
+EXPRESSAO({ID}{NUM})({OPERADOR}({ID}{NUM}))+
 ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 %%

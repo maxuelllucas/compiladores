@@ -129,10 +129,11 @@ string gera_ID();
 void insereSimbolo(string nome, string tipo);
 bool verificaSimbolo(string nome);
 string obterTipoSimbolo(string nome);
+void imprimeVariavel();
 
 int yylex(void);
 void yyerror(string);
-vector<string> variaveis; // Vetor para armazenar as variáveis encontradas
+
 
 
 #line 88 "/usr/share/bison++/bison.cc"
@@ -532,8 +533,8 @@ static const short yyrhs[] = {     8,
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    54,    64,    72,    73,    76,    79,    89,    99,   109,   119,
-   130,   141,   154
+    55,    65,    73,    74,    77,    80,    90,   100,   110,   120,
+   131,   142,   155
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","TK_NUM","TK_TIPO_FLOAT",
@@ -1083,17 +1084,16 @@ YYLABEL(yyreduce)
   switch (yyn) {
 
 case 1:
-#line 55 "sintatica.y"
+#line 56 "sintatica.y"
 {
-				/*/ Imprime as variáveis encontradas antes de imprimir o código gerado
-                for (const string& variavel : variaveis) {
-                    cout << variavel << endl;
-                }*/
-                cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << yyvsp[0].traducao << "\treturn 0;\n}" << endl;
+                cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
+                imprimeVariavel() ;
+                
+                 cout << yyvsp[0].traducao << "\treturn 0;\n}" << endl;
             ;
     break;}
 case 2:
-#line 65 "sintatica.y"
+#line 66 "sintatica.y"
 {
                 string label = geraLabel();
                 yyval.traducao = yyvsp[-1].traducao;
@@ -1101,7 +1101,7 @@ case 2:
             ;
     break;}
 case 6:
-#line 80 "sintatica.y"
+#line 81 "sintatica.y"
 {
                 string label = geraLabel();
                 yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = " + yyvsp[-2].label + " + " + yyvsp[0].label + "\n";
@@ -1113,7 +1113,7 @@ case 6:
             ;
     break;}
 case 7:
-#line 91 "sintatica.y"
+#line 92 "sintatica.y"
 {
                 string label = geraLabel();
                 yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " - " + yyvsp[0].label + "\n";
@@ -1124,7 +1124,7 @@ case 7:
             ;
     break;}
 case 8:
-#line 101 "sintatica.y"
+#line 102 "sintatica.y"
 {
                 string label = geraLabel();
                 yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " * " + yyvsp[0].label + "\n";
@@ -1135,7 +1135,7 @@ case 8:
             ;
     break;}
 case 9:
-#line 111 "sintatica.y"
+#line 112 "sintatica.y"
 {
                 string label = geraLabel();
                 yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " / " + yyvsp[0].label + "\n";
@@ -1146,11 +1146,11 @@ case 9:
             ;
     break;}
 case 10:
-#line 121 "sintatica.y"
+#line 122 "sintatica.y"
 {
                 yyval.tipo= "int";
                 string label = geraLabel();
-                yyval.traducao = "\t" + yyval.tipo + " " + label + ";\n \t" + label + " = "  + yyvsp[0].traducao + ";\n";
+                yyval.traducao = "\t" + label +  " = "  + yyvsp[0].traducao + ";\n";
                 yyval.label= label;
 
                 // Inserir o símbolo na tabela de símbolos
@@ -1158,7 +1158,7 @@ case 10:
             ;
     break;}
 case 11:
-#line 132 "sintatica.y"
+#line 133 "sintatica.y"
 {
                 yyval.tipo= "float";
                 string label = geraLabel();
@@ -1170,7 +1170,7 @@ case 11:
             ;
     break;}
 case 12:
-#line 143 "sintatica.y"
+#line 144 "sintatica.y"
 {
                 string label = geraLabel();
 
@@ -1178,18 +1178,18 @@ case 12:
                 insereSimbolo(label, yyval.tipo);
                 string tipo = obterTipoSimbolo(yyvsp[0].label); // Obtém o tipo do símbolo da tabela de símbolos
 
-                yyval.traducao = "\t" + yyval.tipo + " " + label + " = "  + yyvsp[0].label + ";\n";
+                yyval.traducao = "\t" + yyval.tipo + " " + yyval.label + " = "  + yyvsp[0].label + ";\n";
                 yyval.label = label;
 
             ;
     break;}
 case 13:
-#line 156 "sintatica.y"
+#line 157 "sintatica.y"
 {
 				yyvsp[-2].tipo=yyvsp[0].tipo;
 				insereSimbolo(yyvsp[-2].label,yyvsp[-2].tipo);
 				string tipo=obterTipoSimbolo(yyvsp[-2].label);
-                yyval.traducao ='\t' + yyvsp[-2].tipo + " " +yyvsp[-2].label + ";\n"+ '\t'+ yyvsp[0].tipo + " " + yyvsp[0].label + ";\n" + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
+                yyval.traducao ='\t' + "\n" + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
 
 		    ;
     break;}
@@ -1397,7 +1397,7 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 165 "sintatica.y"
+#line 166 "sintatica.y"
 
 
 
@@ -1409,10 +1409,6 @@ int main(int argc, char* argv[])
 {
     yyparse();
 
-	//Mostrando a tabela de símbolos
-	for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        cout<<simbolo.tipo + " " + simbolo.nome<<endl;
-    }
     return 0;
 }
 
@@ -1429,8 +1425,13 @@ string geraLabel()
 
     stringstream ss;
     ss << "T" << i++;
-
     return ss.str();
+}
+
+void imprimeVariavel(){
+    for (const Simbolo& simbolo : tabelaDeSimbolos) {
+        cout<<"\t" + simbolo.tipo + " " + simbolo.nome + "\t"<<endl;
+    }
 }
 
 void insereSimbolo(string nome, string tipo)
