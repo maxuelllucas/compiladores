@@ -29,10 +29,11 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 "float"		{return TK_TIPO_FLOAT;}
 
 
+[(){}[\];,]	       { return *yytext; }
 
-[(){}[\];,]	{ return *yytext; }
+[<>! >= <= == !=]  { return *yytext; }
 
-[+\-*/=]	{ return *yytext; }
+[+\-*/=]	       { return *yytext; }
 
 
 {NUM}		{ yylval.traducao = yytext; return TK_NUM; }

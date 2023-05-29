@@ -139,6 +139,84 @@ E           : E '+' E
                 temp.tipoVariavel = "float"; // Sempre usamos "float" para operações de divisão
                 tabelaSimbolos.push_back(temp);
             }
+            | E '>' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " > " + $3.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
+            | E '<' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " < " + $3.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
+            | E '>''=' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " >= " + $4.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
+            | E '<''=' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " <= " + $4.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
+            | E '=''=' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " == " + $4.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
+            | E '!''=' E
+            {
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " != " + $4.label + ";\n";
+
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
+            }
             | TK_ID
             {
                 bool encontrei = false; 
