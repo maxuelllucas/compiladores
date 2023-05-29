@@ -28,6 +28,8 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "float"		{return TK_TIPO_FLOAT;}
 
+
+
 [(){}[\];,]	{ return *yytext; }
 
 [+\-*/=]	{ return *yytext; }

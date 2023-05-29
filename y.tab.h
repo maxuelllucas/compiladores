@@ -187,11 +187,11 @@ typedef
 
  #line 169 "/usr/share/bison++/bison.h"
 #define	TK_NUM	258
-#define	TK_TIPO_FLOAT	259
-#define	TK_REAL	260
-#define	TK_MAIN	261
-#define	TK_ID	262
-#define	TK_TIPO_INT	263
+#define	TK_REAL	259
+#define	TK_MAIN	260
+#define	TK_ID	261
+#define	TK_TIPO_INT	262
+#define	TK_TIPO_FLOAT	263
 #define	TK_FIM	264
 #define	TK_ERROR	265
 
@@ -243,11 +243,11 @@ public:
   
  #line 212 "/usr/share/bison++/bison.h"
 static const int TK_NUM;
-static const int TK_TIPO_FLOAT;
 static const int TK_REAL;
 static const int TK_MAIN;
 static const int TK_ID;
 static const int TK_TIPO_INT;
+static const int TK_TIPO_FLOAT;
 static const int TK_FIM;
 static const int TK_ERROR;
 
@@ -259,11 +259,11 @@ static const int TK_ERROR;
   
  #line 215 "/usr/share/bison++/bison.h"
 	,TK_NUM=258
-	,TK_TIPO_FLOAT=259
-	,TK_REAL=260
-	,TK_MAIN=261
-	,TK_ID=262
-	,TK_TIPO_INT=263
+	,TK_REAL=259
+	,TK_MAIN=260
+	,TK_ID=261
+	,TK_TIPO_INT=262
+	,TK_TIPO_FLOAT=263
 	,TK_FIM=264
 	,TK_ERROR=265
 

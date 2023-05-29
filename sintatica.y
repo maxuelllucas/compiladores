@@ -8,170 +8,232 @@
 
 using namespace std;
 
-struct Simbolo {
-    string nome;
-    string tipo;
-};
-
-//Criando a lista(vetor) da tabela de símbolos
-vector<Simbolo> tabelaDeSimbolos;
-
-struct atributos {
+struct atributos
+{
     string label;
-    string id;
     string traducao;
     string tipo;
-};
+}; 
 
-string geraLabel();
-string gera_ID();
-void insereSimbolo(string nome, string tipo);
-bool verificaSimbolo(string nome);
-string obterTipoSimbolo(string nome);
-void imprimeVariavel();
+typedef struct
+{
+    string nomeVariavel;
+    string tipoVariavel;
+} TIPO_SIMBOLO; 
+
+vector<TIPO_SIMBOLO> tabelaSimbolos;
 
 int yylex(void);
 void yyerror(string);
-
+string geraLabel();
+void imprimirTabelaDeSimbolos();;
 
 %}
 
-//Tokens Pro Léxico
-%token TK_NUM
-%token TK_TIPO_FLOAT
-%token TK_REAL
-%token TK_MAIN TK_ID TK_TIPO_INT
+%token TK_NUM TK_REAL
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
 %token TK_FIM TK_ERROR
 
 %start S
 
-//Ordem de precedência 
-%left '+' '-'
-%left '*' '/'
+%left '+'
 
 %%
-
 
 S           : TK_TIPO_INT TK_MAIN '(' ')' BLOCO
             {
                 cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
-                imprimeVariavel() ;
-                
-                 cout << $5.traducao << "\treturn 0;\n}" << endl;
+                imprimirTabelaDeSimbolos();
+                cout << $5.traducao << "\treturn 0;\n}" << endl;
             }
-            
             ;
 
 BLOCO       : '{' COMANDOS '}'
             {
-                string label = geraLabel();
                 $$.traducao = $2.traducao;
-                $$.label= label;
             }
             ;
 
 COMANDOS    : COMANDO COMANDOS
+            {
+                $$.traducao = $1.traducao + $2.traducao;
+            }
             |
+            {
+                $$.traducao = "";
+            }
             ;
 
 COMANDO     : E ';'
+            | TK_TIPO_INT TK_ID ';'
+            {
+                TIPO_SIMBOLO valor;
+                valor.nomeVariavel = $2.label;
+                valor.tipoVariavel = "int"; 
+
+                tabelaSimbolos.push_back(valor);
+
+                $$.traducao = "";
+                $$.label = ""; 
+            }
+            | TK_TIPO_FLOAT TK_ID ';'
+            {
+                TIPO_SIMBOLO valor;
+                valor.nomeVariavel = $2.label;
+                valor.tipoVariavel = "float"; 
+
+                tabelaSimbolos.push_back(valor);
+
+                $$.traducao = "";
+                $$.label = ""; 
+            }
             ;
 
 E           : E '+' E
             {
-                string label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + label + " = " + $1.label + " + " + $3.label + "\n";
-                $$.label= label;
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " + " + $3.label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,$$.tipo);
-
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            E '-' E
+            | E '-' E
             {
-                string label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + label + " = "  + $1.label + " - " + $3.label + "\n";
-                $$.label= label;
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " - " + $3.label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,$$.tipo);
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            E '*' E
+            | E '*' E
             {
-                string label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + label + " = "  + $1.label + " * " + $3.label + "\n";
-                $$.label= label;
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " * " + $3.label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,$$.tipo);
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            E '/' E
+            | E '/' E
             {
-                string label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + label + " = "  + $1.label + " / " + $3.label + "\n";
-                $$.label= label;
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                    " = " + $1.label + " - " + $3.label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,$$.tipo);
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = "float"; // Sempre usamos "float" para operações de divisão
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            TK_NUM
+            | TK_ID
             {
-                $$.tipo= "int";
-                string label = geraLabel();
-                $$.traducao = "\t" + label +  " = "  + $1.traducao + ";\n";
-                $$.label= label;
+                bool encontrei = false; 
+                TIPO_SIMBOLO variavel; 
+                for (int i = 0; i < tabelaSimbolos.size(); i++){
+                    if(tabelaSimbolos[i].nomeVariavel == $1.label){
+                        variavel = tabelaSimbolos[i];
+                        encontrei = true;
+                    }
+                }
+                if(!encontrei){
+                    yyerror("Variavel não declarada!");
+                }
 
-                // Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, $$.tipo);
+                $$.tipo = variavel.tipoVariavel; 
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = variavel.tipoVariavel;
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            TK_REAL
+            | TK_ID '=' E
             {
-                $$.tipo= "float";
-                string label = geraLabel();
-                $$.traducao = "\t" + $$.tipo + " " + label + ";\n\t" + label + " = "  + $1.traducao + ";\n";
-                $$.label= label;
+                bool encontrei = false; 
+                TIPO_SIMBOLO variavel; 
+                for (int i = 0; i < tabelaSimbolos.size(); i++){
+                    if(tabelaSimbolos[i].nomeVariavel == $1.label){
+                        variavel = tabelaSimbolos[i];
+                        encontrei = true;
+                    }
+                }
+                if(!encontrei){
+                    yyerror("Variavel não declarada!");
+                }
+                
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 
-                // Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, $$.tipo);
+                $$.tipo = $1.tipo; // Usar o tipo da variável original
+                $$.label = geraLabel();
+                $$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+
+                // Atualizar tipo da temporária com base no tipo da variável original   
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $1.label;
+                temp.tipoVariavel = $1.tipo; // Usar o tipo da variável original
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            TK_ID
+            | TK_NUM
             {
-                string label = geraLabel();
+                $$.tipo = "int";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
-				// Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, $$.tipo);
-                string tipo = obterTipoSimbolo($1.label); // Obtém o tipo do símbolo da tabela de símbolos
-
-                $$.traducao = "\t" + $$.tipo + " " + $$.label + " = "  + $1.label + ";\n";
-                $$.label = label;
-
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = "int";
+                tabelaSimbolos.push_back(temp);
             }
-            |
-            TK_ID '=' E
+            | TK_REAL
             {
-				$1.tipo=$3.tipo;
-				insereSimbolo($1.label,$1.tipo);
-				string tipo=obterTipoSimbolo($1.label);
-                $$.traducao ='\t' + "\n" + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+                $$.tipo = "float";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
-		    }
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = "float";
+                tabelaSimbolos.push_back(temp);
+            }
             ;
 
 %%
-
 
 #include "lex.yy.c"
 
 int yyparse();
 
+string geraLabel()
+{
+    static int i = 1;
+
+    stringstream ss;
+    ss << "T" << i++;
+
+    return ss.str();
+}
+
 int main(int argc, char* argv[])
 {
+
     yyparse();
 
     return 0;
@@ -180,56 +242,37 @@ int main(int argc, char* argv[])
 void yyerror(string MSG)
 {
     cout << MSG << endl;
-    exit(0);
-}
+    exit (0);
+}               
 
-
-string geraLabel()
+void atribuirTiposTemporarios()
 {
-    static int i = 1;
-
-    stringstream ss;
-    ss << "T" << i++;
-    return ss.str();
-}
-
-void imprimeVariavel(){
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        cout<<"\t" + simbolo.tipo + " " + simbolo.nome + "\t"<<endl;
+    for (auto& temp : tabelaSimbolos) {
+        if (temp.nomeVariavel[0] == 'T') {
+            string nomeOriginal = temp.nomeVariavel.substr(1);
+            for (const auto& original : tabelaSimbolos) {
+                if (original.nomeVariavel == nomeOriginal) {
+                    temp.tipoVariavel = original.tipoVariavel;
+                    break;
+                }
+            }
+        }
     }
 }
 
-void insereSimbolo(string nome, string tipo)
+void imprimirTabelaDeSimbolos()
 {
-    Simbolo simbolo;
-    simbolo.nome = nome;
-    simbolo.tipo = tipo;
+    atribuirTiposTemporarios();
 
-    tabelaDeSimbolos.push_back(simbolo);
-}
-
-//verificar se  o símbolo está na tabela de símbolos
-bool verificaSimbolo(string nome)
-{
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        if (simbolo.nome == nome) {
-            return true;
+    for (const auto& simbolo : tabelaSimbolos) {
+        if (!simbolo.tipoVariavel.empty() && simbolo.nomeVariavel[0] == 'T') {
+            cout << "\t" << simbolo.tipoVariavel << " " << simbolo.nomeVariavel << ";" << endl;
         }
     }
 
-    return false;
-}
-
-//retornar tipo do símbolo
-string obterTipoSimbolo(string nome)
-{
-	//varre a tabela de símbolos comparando com o nome fornecido
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        if (simbolo.nome == nome) {
-            return simbolo.tipo;
+    for (const auto& simbolo : tabelaSimbolos) {
+        if (!simbolo.tipoVariavel.empty() && simbolo.nomeVariavel[0] != 'T') {
+            cout << "\t" << simbolo.tipoVariavel << " " << simbolo.nomeVariavel << ";" << endl;
         }
     }
-	
-	//se não encontrar simbolo na tabela de símbolos retorna uma string vazia
-    return "";
 }

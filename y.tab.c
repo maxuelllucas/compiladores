@@ -109,31 +109,25 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
 
 using namespace std;
 
-struct Simbolo {
-    string nome;
-    string tipo;
-};
-
-//Criando a lista(vetor) da tabela de símbolos
-vector<Simbolo> tabelaDeSimbolos;
-
-struct atributos {
+struct atributos
+{
     string label;
-    string id;
     string traducao;
     string tipo;
-};
+}; 
 
-string geraLabel();
-string gera_ID();
-void insereSimbolo(string nome, string tipo);
-bool verificaSimbolo(string nome);
-string obterTipoSimbolo(string nome);
-void imprimeVariavel();
+typedef struct
+{
+    string nomeVariavel;
+    string tipoVariavel;
+} TIPO_SIMBOLO; 
+
+vector<TIPO_SIMBOLO> tabelaSimbolos;
 
 int yylex(void);
 void yyerror(string);
-
+string geraLabel();
+void imprimirTabelaDeSimbolos();;
 
 
 #line 88 "/usr/share/bison++/bison.cc"
@@ -337,11 +331,11 @@ typedef
 
  #line 263 "/usr/share/bison++/bison.cc"
 #define	TK_NUM	258
-#define	TK_TIPO_FLOAT	259
-#define	TK_REAL	260
-#define	TK_MAIN	261
-#define	TK_ID	262
-#define	TK_TIPO_INT	263
+#define	TK_REAL	259
+#define	TK_MAIN	260
+#define	TK_ID	261
+#define	TK_TIPO_INT	262
+#define	TK_TIPO_FLOAT	263
 #define	TK_FIM	264
 #define	TK_ERROR	265
 
@@ -394,11 +388,11 @@ public:
 
  #line 307 "/usr/share/bison++/bison.cc"
 static const int TK_NUM;
-static const int TK_TIPO_FLOAT;
 static const int TK_REAL;
 static const int TK_MAIN;
 static const int TK_ID;
 static const int TK_TIPO_INT;
+static const int TK_TIPO_FLOAT;
 static const int TK_FIM;
 static const int TK_ERROR;
 
@@ -410,11 +404,11 @@ enum YY_parse_ENUM_TOKEN { YY_parse_NULL_TOKEN=0
 
  #line 310 "/usr/share/bison++/bison.cc"
 	,TK_NUM=258
-	,TK_TIPO_FLOAT=259
-	,TK_REAL=260
-	,TK_MAIN=261
-	,TK_ID=262
-	,TK_TIPO_INT=263
+	,TK_REAL=259
+	,TK_MAIN=260
+	,TK_ID=261
+	,TK_TIPO_INT=262
+	,TK_TIPO_FLOAT=263
 	,TK_FIM=264
 	,TK_ERROR=265
 
@@ -454,11 +448,11 @@ public:
 
  #line 341 "/usr/share/bison++/bison.cc"
 const int YY_parse_CLASS::TK_NUM=258;
-const int YY_parse_CLASS::TK_TIPO_FLOAT=259;
-const int YY_parse_CLASS::TK_REAL=260;
-const int YY_parse_CLASS::TK_MAIN=261;
-const int YY_parse_CLASS::TK_ID=262;
-const int YY_parse_CLASS::TK_TIPO_INT=263;
+const int YY_parse_CLASS::TK_REAL=259;
+const int YY_parse_CLASS::TK_MAIN=260;
+const int YY_parse_CLASS::TK_ID=261;
+const int YY_parse_CLASS::TK_TIPO_INT=262;
+const int YY_parse_CLASS::TK_TIPO_FLOAT=263;
 const int YY_parse_CLASS::TK_FIM=264;
 const int YY_parse_CLASS::TK_ERROR=265;
 
@@ -479,7 +473,7 @@ YY_parse_CONSTRUCTOR_CODE;
  #line 352 "/usr/share/bison++/bison.cc"
 
 
-#define	YYFINAL		28
+#define	YYFINAL		34
 #define	YYFLAG		-32768
 #define	YYNTBASE	21
 
@@ -489,16 +483,16 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    15,
-    16,    13,    11,     2,    12,     2,    14,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,    19,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,     2,    12,
+    13,    18,    11,     2,    17,     2,    19,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,    16,     2,
     20,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,    17,     2,    18,     2,     2,     2,     2,     2,
+     2,     2,    14,     2,    15,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -518,76 +512,80 @@ static const char yytranslate[] = {     0,
 #if YY_parse_DEBUG != 0
 static const short yyprhs[] = {     0,
      0,     6,    10,    13,    14,    17,    21,    25,    29,    33,
-    35,    37,    39
+    37,    41,    43,    47,    49
 };
 
-static const short yyrhs[] = {     8,
-     6,    15,    16,    22,     0,    17,    23,    18,     0,    24,
-    23,     0,     0,    25,    19,     0,    25,    11,    25,     0,
-    25,    12,    25,     0,    25,    13,    25,     0,    25,    14,
-    25,     0,     3,     0,     5,     0,     7,     0,     7,    20,
-    25,     0
+static const short yyrhs[] = {     7,
+     5,    12,    13,    22,     0,    14,    23,    15,     0,    24,
+    23,     0,     0,    25,    16,     0,     7,     6,    16,     0,
+     8,     6,    16,     0,    25,    11,    25,     0,    25,    17,
+    25,     0,    25,    18,    25,     0,    25,    19,    25,     0,
+     6,     0,     6,    20,    25,     0,     3,     0,     4,     0
 };
 
 #endif
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    55,    65,    73,    74,    77,    80,    90,   100,   110,   120,
-   131,   142,   155
+    43,    51,    57,    61,    67,    68,    79,    92,   105,   118,
+   131,   142,   166,   192,   204
 };
 
-static const char * const yytname[] = {   "$","error","$illegal.","TK_NUM","TK_TIPO_FLOAT",
-"TK_REAL","TK_MAIN","TK_ID","TK_TIPO_INT","TK_FIM","TK_ERROR","'+'","'-'","'*'",
-"'/'","'('","')'","'{'","'}'","';'","'='","S","BLOCO","COMANDOS","COMANDO","E",
-""
+static const char * const yytname[] = {   "$","error","$illegal.","TK_NUM","TK_REAL",
+"TK_MAIN","TK_ID","TK_TIPO_INT","TK_TIPO_FLOAT","TK_FIM","TK_ERROR","'+'","'('",
+"')'","'{'","'}'","';'","'-'","'*'","'/'","'='","S","BLOCO","COMANDOS","COMANDO",
+"E",""
 };
 #endif
 
 static const short yyr1[] = {     0,
-    21,    22,    23,    23,    24,    25,    25,    25,    25,    25,
-    25,    25,    25
+    21,    22,    23,    23,    24,    24,    24,    25,    25,    25,
+    25,    25,    25,    25,    25
 };
 
 static const short yyr2[] = {     0,
-     5,     3,     2,     0,     2,     3,     3,     3,     3,     1,
-     1,     1,     3
+     5,     3,     2,     0,     2,     3,     3,     3,     3,     3,
+     3,     1,     3,     1,     1
 };
 
 static const short yydefact[] = {     0,
-     0,     0,     0,     0,     4,     1,    10,    11,    12,     0,
-     4,     0,     0,     2,     3,     0,     0,     0,     0,     5,
-    13,     6,     7,     8,     9,     0,     0,     0
+     0,     0,     0,     0,     4,     1,    14,    15,    12,     0,
+     0,     0,     4,     0,     0,     0,     0,     2,     3,     0,
+     5,     0,     0,     0,    13,     6,     7,     8,     9,    10,
+    11,     0,     0,     0
 };
 
-static const short yydefgoto[] = {    26,
-     6,    10,    11,    12
+static const short yydefgoto[] = {    32,
+     6,    12,    13,    14
 };
 
-static const short yypact[] = {    -1,
-     8,     1,     6,     9,    10,-32768,-32768,-32768,     3,    11,
-    10,   -11,    10,-32768,-32768,    10,    10,    10,    10,-32768,
-     7,    -9,    -9,-32768,-32768,    24,    25,-32768
+static const short yypact[] = {    -4,
+    10,     9,    15,    17,    16,-32768,-32768,-32768,    12,    23,
+    24,    18,    16,    -5,    -2,    19,    20,-32768,-32768,    -2,
+-32768,    -2,    -2,    -2,    -1,-32768,-32768,     8,    -1,    -1,
+    -1,    34,    37,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768,    16,-32768,    -7
+-32768,    25,-32768,   -15
 };
 
 
-#define	YYLAST		29
+#define	YYLAST		38
 
 
-static const short yytable[] = {    16,
-    17,    18,    19,    18,    19,    21,     1,    20,    22,    23,
-    24,    25,     7,     2,     8,     3,     9,    16,    17,    18,
-    19,     4,    13,    27,    28,     5,    15,     0,    14
+static const short yytable[] = {    25,
+     7,     8,     1,     9,    28,    20,    29,    30,    31,    20,
+    21,    22,    23,    24,     2,    22,    23,    24,     7,     8,
+     3,     9,    10,    11,    22,    23,    24,     4,    16,    17,
+     5,    15,    18,    33,    26,    27,    34,    19
 };
 
-static const short yycheck[] = {    11,
-    12,    13,    14,    13,    14,    13,     8,    19,    16,    17,
-    18,    19,     3,     6,     5,    15,     7,    11,    12,    13,
-    14,    16,    20,     0,     0,    17,    11,    -1,    18
+static const short yycheck[] = {    15,
+     3,     4,     7,     6,    20,    11,    22,    23,    24,    11,
+    16,    17,    18,    19,     5,    17,    18,    19,     3,     4,
+    12,     6,     7,     8,    17,    18,    19,    13,     6,     6,
+    14,    20,    15,     0,    16,    16,     0,    13
 };
 
 #line 352 "/usr/share/bison++/bison.cc"
@@ -1084,114 +1082,196 @@ YYLABEL(yyreduce)
   switch (yyn) {
 
 case 1:
-#line 56 "sintatica.y"
+#line 44 "sintatica.y"
 {
                 cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
-                imprimeVariavel() ;
-                
-                 cout << yyvsp[0].traducao << "\treturn 0;\n}" << endl;
+                imprimirTabelaDeSimbolos();
+                cout << yyvsp[0].traducao << "\treturn 0;\n}" << endl;
             ;
     break;}
 case 2:
-#line 66 "sintatica.y"
+#line 52 "sintatica.y"
 {
-                string label = geraLabel();
                 yyval.traducao = yyvsp[-1].traducao;
-                yyval.label= label;
+            ;
+    break;}
+case 3:
+#line 58 "sintatica.y"
+{
+                yyval.traducao = yyvsp[-1].traducao + yyvsp[0].traducao;
+            ;
+    break;}
+case 4:
+#line 62 "sintatica.y"
+{
+                yyval.traducao = "";
             ;
     break;}
 case 6:
-#line 81 "sintatica.y"
+#line 69 "sintatica.y"
 {
-                string label = geraLabel();
-                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = " + yyvsp[-2].label + " + " + yyvsp[0].label + "\n";
-                yyval.label= label;
+                TIPO_SIMBOLO valor;
+                valor.nomeVariavel = yyvsp[-1].label;
+                valor.tipoVariavel = "int"; 
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,yyval.tipo);
+                tabelaSimbolos.push_back(valor);
 
+                yyval.traducao = "";
+                yyval.label = ""; 
             ;
     break;}
 case 7:
-#line 92 "sintatica.y"
+#line 80 "sintatica.y"
 {
-                string label = geraLabel();
-                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " - " + yyvsp[0].label + "\n";
-                yyval.label= label;
+                TIPO_SIMBOLO valor;
+                valor.nomeVariavel = yyvsp[-1].label;
+                valor.tipoVariavel = "float"; 
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,yyval.tipo);
+                tabelaSimbolos.push_back(valor);
+
+                yyval.traducao = "";
+                yyval.label = ""; 
             ;
     break;}
 case 8:
-#line 102 "sintatica.y"
+#line 93 "sintatica.y"
 {
-                string label = geraLabel();
-                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " * " + yyvsp[0].label + "\n";
-                yyval.label= label;
+                yyval.label = geraLabel();
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
+                    " = " + yyvsp[-2].label + " + " + yyvsp[0].label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,yyval.tipo);
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = (yyvsp[-2].tipo == yyvsp[0].tipo) ? yyvsp[-2].tipo: "float";
+                tabelaSimbolos.push_back(temp);
             ;
     break;}
 case 9:
-#line 112 "sintatica.y"
+#line 106 "sintatica.y"
 {
-                string label = geraLabel();
-                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + label + " = "  + yyvsp[-2].label + " / " + yyvsp[0].label + "\n";
-                yyval.label= label;
+                yyval.label = geraLabel();
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
+                    " = " + yyvsp[-2].label + " - " + yyvsp[0].label + ";\n";
 
-				// Inserir o símbolo na tabela de símbolo
-				insereSimbolo(label,yyval.tipo);
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = (yyvsp[-2].tipo == yyvsp[0].tipo) ? yyvsp[-2].tipo: "float";
+                tabelaSimbolos.push_back(temp);
             ;
     break;}
 case 10:
-#line 122 "sintatica.y"
+#line 119 "sintatica.y"
 {
-                yyval.tipo= "int";
-                string label = geraLabel();
-                yyval.traducao = "\t" + label +  " = "  + yyvsp[0].traducao + ";\n";
-                yyval.label= label;
+                yyval.label = geraLabel();
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
+                    " = " + yyvsp[-2].label + " * " + yyvsp[0].label + ";\n";
 
-                // Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, yyval.tipo);
+                // Atualizar tipo da temporária com base nos tipos dos operandos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
+                temp.tipoVariavel = (yyvsp[-2].tipo == yyvsp[0].tipo) ? yyvsp[-2].tipo: "float";
+                tabelaSimbolos.push_back(temp);
             ;
     break;}
 case 11:
-#line 133 "sintatica.y"
+#line 132 "sintatica.y"
 {
-                yyval.tipo= "float";
-                string label = geraLabel();
-                yyval.traducao = "\t" + yyval.tipo + " " + label + ";\n\t" + label + " = "  + yyvsp[0].traducao + ";\n";
-                yyval.label= label;
+                yyval.label = geraLabel();
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
+                    " = " + yyvsp[-2].label + " - " + yyvsp[0].label + ";\n";
 
-                // Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, yyval.tipo);
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                temp.tipoVariavel = "float"; // Sempre usamos "float" para operações de divisão
+                tabelaSimbolos.push_back(temp);
             ;
     break;}
 case 12:
-#line 144 "sintatica.y"
+#line 143 "sintatica.y"
 {
-                string label = geraLabel();
+                bool encontrei = false; 
+                TIPO_SIMBOLO variavel; 
+                for (int i = 0; i < tabelaSimbolos.size(); i++){
+                    if(tabelaSimbolos[i].nomeVariavel == yyvsp[0].label){
+                        variavel = tabelaSimbolos[i];
+                        encontrei = true;
+                    }
+                }
+                if(!encontrei){
+                    yyerror("Variavel não declarada!");
+                }
 
-				// Inserir o símbolo na tabela de símbolos
-                insereSimbolo(label, yyval.tipo);
-                string tipo = obterTipoSimbolo(yyvsp[0].label); // Obtém o tipo do símbolo da tabela de símbolos
+                yyval.tipo = variavel.tipoVariavel; 
+                yyval.label = geraLabel();
+                yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 
-                yyval.traducao = "\t" + yyval.tipo + " " + yyval.label + " = "  + yyvsp[0].label + ";\n";
-                yyval.label = label;
-
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                temp.tipoVariavel = variavel.tipoVariavel;
+                tabelaSimbolos.push_back(temp);
             ;
     break;}
 case 13:
-#line 157 "sintatica.y"
+#line 167 "sintatica.y"
 {
-				yyvsp[-2].tipo=yyvsp[0].tipo;
-				insereSimbolo(yyvsp[-2].label,yyvsp[-2].tipo);
-				string tipo=obterTipoSimbolo(yyvsp[-2].label);
-                yyval.traducao ='\t' + "\n" + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
+                bool encontrei = false; 
+                TIPO_SIMBOLO variavel; 
+                for (int i = 0; i < tabelaSimbolos.size(); i++){
+                    if(tabelaSimbolos[i].nomeVariavel == yyvsp[-2].label){
+                        variavel = tabelaSimbolos[i];
+                        encontrei = true;
+                    }
+                }
+                if(!encontrei){
+                    yyerror("Variavel não declarada!");
+                }
+                
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
 
-		    ;
+                yyval.tipo = yyvsp[-2].tipo; // Usar o tipo da variável original
+                yyval.label = geraLabel();
+                yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
+
+                // Atualizar tipo da temporária com base no tipo da variável original   
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyvsp[-2].label;
+                temp.tipoVariavel = yyvsp[-2].tipo; // Usar o tipo da variável original
+                tabelaSimbolos.push_back(temp);
+            ;
+    break;}
+case 14:
+#line 193 "sintatica.y"
+{
+                yyval.tipo = "int";
+                yyval.label = geraLabel();
+                yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                temp.tipoVariavel = "int";
+                tabelaSimbolos.push_back(temp);
+            ;
+    break;}
+case 15:
+#line 205 "sintatica.y"
+{
+                yyval.tipo = "float";
+                yyval.label = geraLabel();
+                yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = yyval.label;
+                temp.tipoVariavel = "float";
+                tabelaSimbolos.push_back(temp);
+            ;
     break;}
 }
 
@@ -1397,16 +1477,26 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 166 "sintatica.y"
-
+#line 218 "sintatica.y"
 
 
 #include "lex.yy.c"
 
 int yyparse();
 
+string geraLabel()
+{
+    static int i = 1;
+
+    stringstream ss;
+    ss << "T" << i++;
+
+    return ss.str();
+}
+
 int main(int argc, char* argv[])
 {
+
     yyparse();
 
     return 0;
@@ -1415,56 +1505,37 @@ int main(int argc, char* argv[])
 void yyerror(string MSG)
 {
     cout << MSG << endl;
-    exit(0);
-}
+    exit (0);
+}               
 
-
-string geraLabel()
+void atribuirTiposTemporarios()
 {
-    static int i = 1;
-
-    stringstream ss;
-    ss << "T" << i++;
-    return ss.str();
-}
-
-void imprimeVariavel(){
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        cout<<"\t" + simbolo.tipo + " " + simbolo.nome + "\t"<<endl;
+    for (auto& temp : tabelaSimbolos) {
+        if (temp.nomeVariavel[0] == 'T') {
+            string nomeOriginal = temp.nomeVariavel.substr(1);
+            for (const auto& original : tabelaSimbolos) {
+                if (original.nomeVariavel == nomeOriginal) {
+                    temp.tipoVariavel = original.tipoVariavel;
+                    break;
+                }
+            }
+        }
     }
 }
 
-void insereSimbolo(string nome, string tipo)
+void imprimirTabelaDeSimbolos()
 {
-    Simbolo simbolo;
-    simbolo.nome = nome;
-    simbolo.tipo = tipo;
+    atribuirTiposTemporarios();
 
-    tabelaDeSimbolos.push_back(simbolo);
-}
-
-//verificar se  o símbolo está na tabela de símbolos
-bool verificaSimbolo(string nome)
-{
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        if (simbolo.nome == nome) {
-            return true;
+    for (const auto& simbolo : tabelaSimbolos) {
+        if (!simbolo.tipoVariavel.empty() && simbolo.nomeVariavel[0] == 'T') {
+            cout << "\t" << simbolo.tipoVariavel << " " << simbolo.nomeVariavel << ";" << endl;
         }
     }
 
-    return false;
-}
-
-//retornar tipo do símbolo
-string obterTipoSimbolo(string nome)
-{
-	//varre a tabela de símbolos comparando com o nome fornecido
-    for (const Simbolo& simbolo : tabelaDeSimbolos) {
-        if (simbolo.nome == nome) {
-            return simbolo.tipo;
+    for (const auto& simbolo : tabelaSimbolos) {
+        if (!simbolo.tipoVariavel.empty() && simbolo.nomeVariavel[0] != 'T') {
+            cout << "\t" << simbolo.tipoVariavel << " " << simbolo.nomeVariavel << ";" << endl;
         }
     }
-	
-	//se não encontrar simbolo na tabela de símbolos retorna uma string vazia
-    return "";
 }
