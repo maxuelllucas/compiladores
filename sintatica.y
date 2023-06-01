@@ -102,147 +102,466 @@ COMANDO     : E ';'
 
 E           : E '+' E
             {
-                
-                string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
-                 // Converter int para float se necessário
-                
-                $$.label = geraLabel();
-                
-            if ($1.tipo == "int" && $3.tipo == "float") {
-                $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                $$.traducao += "\t" + $$.label + " = " + tempVar + " + " + $3.label + ";\n";
-                $$.tipo = "float";
 
-            } else if ($1.tipo == "float" && $3.tipo == "int") {
-                $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
-                $$.traducao += "\t" + $$.label + " = " + $1.label + " + " + tempVar + ";\n";
-                $$.tipo = "float";
-            } else {
-                 $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " + " + $3.label + ";\n";
-            }
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " + " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = tempVar + ";\n\t" + $$.tipo + " " + $$.label ;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " + " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " + " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
+            
+
             }
             | E '-' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " - " + $3.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " - " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " - " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " - " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '*' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " * " + $3.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " * " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " * " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " * " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '/' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " - " + $3.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " / " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "float"; // Sempre usamos "float" para operações de divisão
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " / " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " / " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '>' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " > " + $3.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " > " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " > " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " > " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '<' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " < " + $3.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $3.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " < " + $3.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $3.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $3.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " < " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " < " + $3.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '>''=' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " >= " + $4.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $4.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " >= " + $4.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $4.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " >= " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " >= " + $4.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '<''=' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " <= " + $4.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $4.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " <= " + $4.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $4.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " <= " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " <= " + $4.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '=''=' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " == " + $4.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $4.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " == " + $4.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $4.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " == " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " == " + $4.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | E '!''=' E
             {
-                $$.label = geraLabel();
-                $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
-                    " = " + $1.label + " != " + $4.label + ";\n";
+                //Condições para converter de Int para Float
+                if ($1.tipo == "int" && $4.tipo == "float") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + tempVar + " != " + $4.label + ";\n";
+                    $$.tipo = "float";
 
-                // Atualizar tipo da temporária com base nos tipos dos operandos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                // Se os tipos dos operandos são iguais, usamos esse tipo, caso contrário, usamos "float"
-                temp.tipoVariavel = ($1.tipo == $4.tipo) ? $1.tipo: "float";
-                tabelaSimbolos.push_back(temp);
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                
+                else if ($1.tipo == "float" && $4.tipo == "int") {
+                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+                    $$.label = geraLabel();
+                    
+                    $$.traducao =$1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $1.label + " != " + tempVar + ";\n";
+                    $$.tipo = "float";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar + ";\n\t"+ $$.tipo + " " + $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                } 
+                
+                else {
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $4.traducao + "\t" + $$.label + 
+                        " = " + $1.label + " != " + $4.label + ";\n";
+
+                    // Atualizar tipo da temporária com base nos tipos dos operandos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.tipoVariavel = $$.tipo;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
             | TK_ID
             {

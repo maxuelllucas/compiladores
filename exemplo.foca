@@ -1,5 +1,5 @@
-int main( )
+int main()
 {
-	int A;
-	A = 1.0 + 1;
+	float A;
+	A = 1.0 != 2;
 }
