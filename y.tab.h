@@ -188,7 +188,7 @@ typedef
  #line 169 "/usr/share/bison++/bison.h"
 #define	TK_NUM	258
 #define	TK_REAL	259
-#define	TK_BOOL	260
+#define	TK_CHAR	260
 #define	TK_MAIN	261
 #define	TK_ID	262
 #define	TK_TIPO_INT	263
@@ -246,7 +246,7 @@ public:
  #line 212 "/usr/share/bison++/bison.h"
 static const int TK_NUM;
 static const int TK_REAL;
-static const int TK_BOOL;
+static const int TK_CHAR;
 static const int TK_MAIN;
 static const int TK_ID;
 static const int TK_TIPO_INT;
@@ -264,7 +264,7 @@ static const int TK_ERROR;
  #line 215 "/usr/share/bison++/bison.h"
 	,TK_NUM=258
 	,TK_REAL=259
-	,TK_BOOL=260
+	,TK_CHAR=260
 	,TK_MAIN=261
 	,TK_ID=262
 	,TK_TIPO_INT=263

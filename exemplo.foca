@@ -1,5 +1,5 @@
 int main()
 {
 	float A;
-	A = 1.0 != 2;
+	A = (float)1.0 || 1;
 }

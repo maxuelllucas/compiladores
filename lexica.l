@@ -30,9 +30,15 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "bool"      {return TK_TIPO_BOOL;}
 
+"false"     {return TK_TIPO_BOOL;}
+
+"true"      {return TK_TIPO_BOOL;}
+
 [(){}[\];,]	       { return *yytext; }
 
 [<>! >= <= == !=]  { return *yytext; }
+
+[|| &&]            { return *yytext; }
 
 [+\-*/=]	       { return *yytext; }
 
@@ -40,6 +46,7 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 {NUM}		{ yylval.traducao = yytext; return TK_NUM; }
 {REAL}		{ yylval.traducao = yytext; return TK_REAL;}
 {ID}		{ yylval.label = yytext; return TK_ID; }
+{CHAR}      { yylval.label = yytext; return TK_CHAR; }
 
 .			{ *yytext; }
 
