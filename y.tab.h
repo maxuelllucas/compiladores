@@ -194,8 +194,9 @@ typedef
 #define	TK_TIPO_INT	263
 #define	TK_TIPO_FLOAT	264
 #define	TK_TIPO_BOOL	265
-#define	TK_FIM	266
-#define	TK_ERROR	267
+#define	TK_TIPO_CHAR	266
+#define	TK_FIM	267
+#define	TK_ERROR	268
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -252,6 +253,7 @@ static const int TK_ID;
 static const int TK_TIPO_INT;
 static const int TK_TIPO_FLOAT;
 static const int TK_TIPO_BOOL;
+static const int TK_TIPO_CHAR;
 static const int TK_FIM;
 static const int TK_ERROR;
 
@@ -270,8 +272,9 @@ static const int TK_ERROR;
 	,TK_TIPO_INT=263
 	,TK_TIPO_FLOAT=264
 	,TK_TIPO_BOOL=265
-	,TK_FIM=266
-	,TK_ERROR=267
+	,TK_TIPO_CHAR=266
+	,TK_FIM=267
+	,TK_ERROR=268
 
 
 #line 215 "/usr/share/bison++/bison.h"

@@ -20,6 +20,8 @@ typedef struct
     string nomeVariavel;
     string tipoVariavel;
     string nomeOriginal;
+    bool ehConstante;  // Indicador de se é uma constante
+    char valorChar;  // Novo membro para armazenar o valor char
 } TIPO_SIMBOLO; 
 
 vector<TIPO_SIMBOLO> tabelaSimbolos;
@@ -31,14 +33,14 @@ void imprimirTabelaDeSimbolos();;
 
 %}
 
-%token TK_NUM TK_REAL TK_CHAR
-%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL
+%token TK_NUM TK_REAL TK_CHAR 
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR
 %token TK_FIM TK_ERROR
 
 %start S
 
 //Ordem de precedência 
-%left '+' '-'
+%left '+' '-' 
 %left '*' '/'
 
 %%
@@ -97,7 +99,19 @@ COMANDO     : E ';'
                 TIPO_SIMBOLO valor;
                 valor.nomeVariavel = geraLabel();
                 valor.nomeOriginal = $2.label;
-                valor.tipoVariavel = "bool"; 
+                valor.tipoVariavel = "int"; 
+
+                tabelaSimbolos.push_back(valor);
+
+                $$.traducao = "";
+                $$.label = ""; 
+            }
+            | TK_TIPO_CHAR TK_ID ';'
+            {
+                TIPO_SIMBOLO valor;
+                valor.nomeVariavel = geraLabel();
+                valor.nomeOriginal = $2.label;
+                valor.tipoVariavel = "char"; 
 
                 tabelaSimbolos.push_back(valor);
 
@@ -106,16 +120,19 @@ COMANDO     : E ';'
             }
             ;
 
-E           : 
-            E '+' E
+E           : E '+' E
             {
                 //Condições para converter de Int para Float
+                if ($1.tipo == "char" || $3.tipo == "char") {
+                    yyerror("Erro. Operação inválida!");
+                }
+
                 if ($1.tipo == "int" && $3.tipo == "float") {
                     string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " + " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " + " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -163,7 +180,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " - " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " - " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -209,7 +226,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " * " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " * " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -255,7 +272,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " / " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " / " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -301,7 +318,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " > " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " > " + tempVar + ";\n";
                     $$.tipo = "bool";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -347,7 +364,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $3.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " < " + $3.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $3.label + " < " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -393,7 +410,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + ">=" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $4.label + " >= " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -439,7 +456,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + "<=" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $4.label + " <= " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -485,7 +502,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + "==" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $4.label + " == " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -531,7 +548,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + "!=" + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $4.label + " != " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -568,7 +585,7 @@ E           :
                     temp.tipoVariavel = $$.tipo;
                     tabelaSimbolos.push_back(temp);
                 }
-			}
+            }
             | E '|''|' E
             {
                 //Condições para converter de Int para Float
@@ -577,7 +594,7 @@ E           :
                     $$.label = geraLabel();
                     
                     $$.traducao = $1.traducao +  $4.traducao + "\t" + tempVar + " = (float)" + $1.label + ";\n";
-                    $$.traducao += "\t" + $$.label + " = " + tempVar + " || " + $4.label + ";\n";
+                    $$.traducao += "\t" + $$.label + " = " + $4.label + " || " + tempVar + ";\n";
                     $$.tipo = "float";
 
                     // Atualizar tipo da temporária com base nos tipos dos operandos
@@ -614,6 +631,30 @@ E           :
                     temp.tipoVariavel = $$.tipo;
                     tabelaSimbolos.push_back(temp);
                 }
+            }
+            | TK_CHAR
+            {
+                $$.tipo = "char";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = "char";
+                tabelaSimbolos.push_back(temp);
+            }
+            | TK_TIPO_BOOL
+            {
+                $$.tipo = "bool";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                TIPO_SIMBOLO temp;
+                temp.nomeVariavel = $$.label;
+                temp.tipoVariavel = "int";
+                tabelaSimbolos.push_back(temp);
             }
             | TK_ID
             {
@@ -656,7 +697,7 @@ E           :
                 
                 $$.tipo = $1.tipo; // Usar o tipo da variável original
                 $$.label = geraLabel();
-                $$.traducao = $1.traducao + $3.traducao + "\t" + variavel.nomeVariavel + " = " + $3.label + ";\n";
+                $$.traducao = $3.traducao + "\t" + variavel.nomeVariavel + " = " + $3.label + ";\n";
 
             }
             |TK_ID '=''('TK_TIPO_FLOAT')' E 
@@ -681,19 +722,6 @@ E           :
             | TK_NUM
             {
                 $$.tipo = "int";
-                $$.label = geraLabel();
-                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
-
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
-            }
-            |
-            TK_TIPO_BOOL
-            {
-                $$.tipo = "bool";
                 $$.label = geraLabel();
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
