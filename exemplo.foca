@@ -1,5 +1,5 @@
 int main()
 {
 	bool X;
-	X = 1.0 > 1 || true;
+	X = 1.0 > 1 || false || 'max';
 }
