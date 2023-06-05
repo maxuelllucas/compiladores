@@ -189,14 +189,23 @@ typedef
 #define	TK_NUM	258
 #define	TK_REAL	259
 #define	TK_CHAR	260
-#define	TK_MAIN	261
-#define	TK_ID	262
-#define	TK_TIPO_INT	263
-#define	TK_TIPO_FLOAT	264
-#define	TK_TIPO_BOOL	265
-#define	TK_TIPO_CHAR	266
-#define	TK_FIM	267
-#define	TK_ERROR	268
+#define	TK_CAST_INT	261
+#define	TK_CAST_FLOAT	262
+#define	TK_MA	263
+#define	TK_ME	264
+#define	TK_DF	265
+#define	TK_IG	266
+#define	TK_OU	267
+#define	TK_NO	268
+#define	TK_E	269
+#define	TK_MAIN	270
+#define	TK_ID	271
+#define	TK_TIPO_INT	272
+#define	TK_TIPO_FLOAT	273
+#define	TK_TIPO_BOOL	274
+#define	TK_TIPO_CHAR	275
+#define	TK_FIM	276
+#define	TK_ERROR	277
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -248,6 +257,15 @@ public:
 static const int TK_NUM;
 static const int TK_REAL;
 static const int TK_CHAR;
+static const int TK_CAST_INT;
+static const int TK_CAST_FLOAT;
+static const int TK_MA;
+static const int TK_ME;
+static const int TK_DF;
+static const int TK_IG;
+static const int TK_OU;
+static const int TK_NO;
+static const int TK_E;
 static const int TK_MAIN;
 static const int TK_ID;
 static const int TK_TIPO_INT;
@@ -267,14 +285,23 @@ static const int TK_ERROR;
 	,TK_NUM=258
 	,TK_REAL=259
 	,TK_CHAR=260
-	,TK_MAIN=261
-	,TK_ID=262
-	,TK_TIPO_INT=263
-	,TK_TIPO_FLOAT=264
-	,TK_TIPO_BOOL=265
-	,TK_TIPO_CHAR=266
-	,TK_FIM=267
-	,TK_ERROR=268
+	,TK_CAST_INT=261
+	,TK_CAST_FLOAT=262
+	,TK_MA=263
+	,TK_ME=264
+	,TK_DF=265
+	,TK_IG=266
+	,TK_OU=267
+	,TK_NO=268
+	,TK_E=269
+	,TK_MAIN=270
+	,TK_ID=271
+	,TK_TIPO_INT=272
+	,TK_TIPO_FLOAT=273
+	,TK_TIPO_BOOL=274
+	,TK_TIPO_CHAR=275
+	,TK_FIM=276
+	,TK_ERROR=277
 
 
 #line 215 "/usr/share/bison++/bison.h"

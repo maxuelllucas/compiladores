@@ -36,6 +36,24 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "true"      {return TK_TIPO_BOOL;}
 
+"(int)"     {return TK_CAST_INT;}
+
+"(float)"   {return TK_CAST_FLOAT;}
+
+">="        {return TK_MA;}
+
+"<="        {return TK_ME;}
+
+"!="        {return TK_DF;}
+
+"=="        {return TK_IG;}
+
+"||"        {return TK_OU;}
+
+"!"         {return TK_NO;}
+
+"&&"        {return TK_E;} 
+
 [(){}[\];,]	       { return *yytext; }
 
 [<>! >= <= == !=]  { return *yytext; }
