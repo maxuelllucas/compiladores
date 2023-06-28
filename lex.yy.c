@@ -726,7 +726,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "lexica.l"
+#line 44 "lexica.l"
 {return TK_MA;}
 	YY_BREAK
 case 13:
@@ -736,77 +736,77 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 47 "lexica.l"
+#line 46 "lexica.l"
 {return TK_DF;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 49 "lexica.l"
+#line 47 "lexica.l"
 {return TK_IG;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "lexica.l"
+#line 48 "lexica.l"
 {return TK_OU;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 53 "lexica.l"
+#line 49 "lexica.l"
 {return TK_NO;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 55 "lexica.l"
+#line 50 "lexica.l"
 {return TK_E;} 
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 57 "lexica.l"
+#line 52 "lexica.l"
 { return *yytext; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 59 "lexica.l"
+#line 54 "lexica.l"
 { return *yytext; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 61 "lexica.l"
+#line 56 "lexica.l"
 { return *yytext; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 63 "lexica.l"
+#line 58 "lexica.l"
 { return *yytext; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 66 "lexica.l"
+#line 61 "lexica.l"
 { yylval.traducao = yytext; return TK_NUM; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 67 "lexica.l"
+#line 62 "lexica.l"
 { yylval.traducao = yytext; return TK_REAL;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 68 "lexica.l"
+#line 63 "lexica.l"
 { yylval.label = yytext; return TK_ID;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 69 "lexica.l"
+#line 64 "lexica.l"
 { yylval.traducao = yytext; return TK_CHAR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 71 "lexica.l"
+#line 66 "lexica.l"
 { *yytext; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 73 "lexica.l"
+#line 68 "lexica.l"
 ECHO;
 	YY_BREAK
 #line 813 "lex.yy.c"
@@ -1699,5 +1699,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 73 "lexica.l"
+#line 68 "lexica.l"
 

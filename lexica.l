@@ -40,18 +40,13 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "(float)"   {return TK_CAST_FLOAT;}
 
+
 ">="        {return TK_MA;}
-
 "<="        {return TK_ME;}
-
 "!="        {return TK_DF;}
-
 "=="        {return TK_IG;}
-
 "||"        {return TK_OU;}
-
 "!"         {return TK_NO;}
-
 "&&"        {return TK_E;} 
 
 [(){}[\];,]	       { return *yytext; }
