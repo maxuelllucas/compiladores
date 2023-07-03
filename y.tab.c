@@ -131,7 +131,7 @@ void yyerror(string);
 string geraLabel();
 void imprimirTabelaDeSimbolos();
 atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
-
+void insereTabelaDeSimbolos(atributos a, atributos b, string tipo);
 
 
 #line 88 "/usr/share/bison++/bison.cc"
@@ -352,8 +352,6 @@ typedef
 #define	TK_TIPO_FLOAT	273
 #define	TK_TIPO_BOOL	274
 #define	TK_TIPO_CHAR	275
-#define	TK_FIM	276
-#define	TK_ERROR	277
 
 
 #line 263 "/usr/share/bison++/bison.cc"
@@ -421,8 +419,6 @@ static const int TK_TIPO_INT;
 static const int TK_TIPO_FLOAT;
 static const int TK_TIPO_BOOL;
 static const int TK_TIPO_CHAR;
-static const int TK_FIM;
-static const int TK_ERROR;
 
 
 #line 307 "/usr/share/bison++/bison.cc"
@@ -449,8 +445,6 @@ enum YY_parse_ENUM_TOKEN { YY_parse_NULL_TOKEN=0
 	,TK_TIPO_FLOAT=273
 	,TK_TIPO_BOOL=274
 	,TK_TIPO_CHAR=275
-	,TK_FIM=276
-	,TK_ERROR=277
 
 
 #line 310 "/usr/share/bison++/bison.cc"
@@ -505,8 +499,6 @@ const int YY_parse_CLASS::TK_TIPO_INT=272;
 const int YY_parse_CLASS::TK_TIPO_FLOAT=273;
 const int YY_parse_CLASS::TK_TIPO_BOOL=274;
 const int YY_parse_CLASS::TK_TIPO_CHAR=275;
-const int YY_parse_CLASS::TK_FIM=276;
-const int YY_parse_CLASS::TK_ERROR=277;
 
 
 #line 341 "/usr/share/bison++/bison.cc"
@@ -527,24 +519,24 @@ YY_parse_CONSTRUCTOR_CODE;
 
 #define	YYFINAL		67
 #define	YYFLAG		-32768
-#define	YYNTBASE	35
+#define	YYNTBASE	33
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 277 ? yytranslate[x] : 40)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 275 ? yytranslate[x] : 38)
 
 static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    29,
-    30,    27,    25,     2,    26,     2,    28,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,    33,    24,
-    34,    23,     2,     2,     2,     2,     2,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,     2,    27,
+    28,    25,    23,     2,    24,     2,    26,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,    31,    22,
+    32,    21,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,    31,     2,    32,     2,     2,     2,     2,     2,
+     2,     2,    29,     2,    30,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -559,7 +551,7 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     1,     2,     3,     4,     5,
      6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
-    16,    17,    18,    19,    20,    21,    22
+    16,    17,    18,    19,    20
 };
 
 #if YY_parse_DEBUG != 0
@@ -571,42 +563,42 @@ static const short yyprhs[] = {     0,
 };
 
 static const short yyrhs[] = {    17,
-    15,    29,    30,    36,     0,    31,    37,    32,     0,    38,
-    37,     0,     0,    39,    33,     0,    17,    16,    33,     0,
-    18,    16,    33,     0,    19,    16,    33,     0,    20,    16,
-    33,     0,    39,    25,    39,     0,    39,    26,    39,     0,
-    39,    27,    39,     0,    39,    28,    39,     0,    39,    23,
-    39,     0,    39,    24,    39,     0,    39,     8,    39,     0,
-    39,     9,    39,     0,    39,    11,    39,     0,    39,    10,
-    39,     0,    39,    12,    39,     0,    39,    14,    39,     0,
-    39,    13,    39,     0,     5,     0,    19,     0,    16,     0,
-    16,    34,    39,     0,     6,    39,     0,     7,    39,     0,
-     3,     0,     4,     0,    29,    39,    30,     0
+    15,    27,    28,    34,     0,    29,    35,    30,     0,    36,
+    35,     0,     0,    37,    31,     0,    17,    16,    31,     0,
+    18,    16,    31,     0,    19,    16,    31,     0,    20,    16,
+    31,     0,    37,    23,    37,     0,    37,    24,    37,     0,
+    37,    25,    37,     0,    37,    26,    37,     0,    37,    21,
+    37,     0,    37,    22,    37,     0,    37,     8,    37,     0,
+    37,     9,    37,     0,    37,    11,    37,     0,    37,    10,
+    37,     0,    37,    12,    37,     0,    37,    14,    37,     0,
+    37,    13,    37,     0,     5,     0,    19,     0,    16,     0,
+    16,    32,    37,     0,     6,    37,     0,     7,    37,     0,
+     3,     0,     4,     0,    27,    37,    28,     0
 };
 
 #endif
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    51,    59,    65,    69,    75,    76,    88,   100,   112,   126,
-   130,   134,   138,   142,   146,   150,   154,   158,   162,   166,
-   177,   187,   197,   209,   221,   246,   265,   281,   297,   309,
-   321
+    51,    59,    65,    69,    75,    76,    83,    90,    97,   106,
+   110,   114,   118,   122,   126,   130,   134,   138,   142,   146,
+   157,   167,   177,   186,   195,   215,   234,   247,   260,   268,
+   276
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","TK_NUM","TK_REAL",
 "TK_CHAR","TK_CAST_INT","TK_CAST_FLOAT","TK_MA","TK_ME","TK_DF","TK_IG","TK_OU",
 "TK_NO","TK_E","TK_MAIN","TK_ID","TK_TIPO_INT","TK_TIPO_FLOAT","TK_TIPO_BOOL",
-"TK_TIPO_CHAR","TK_FIM","TK_ERROR","'>'","'<'","'+'","'-'","'*'","'/'","'('",
-"')'","'{'","'}'","';'","'='","S","BLOCO","COMANDOS","COMANDO","E",""
+"TK_TIPO_CHAR","'>'","'<'","'+'","'-'","'*'","'/'","'('","')'","'{'","'}'","';'",
+"'='","S","BLOCO","COMANDOS","COMANDO","E",""
 };
 #endif
 
 static const short yyr1[] = {     0,
-    35,    36,    37,    37,    38,    38,    38,    38,    38,    39,
-    39,    39,    39,    39,    39,    39,    39,    39,    39,    39,
-    39,    39,    39,    39,    39,    39,    39,    39,    39,    39,
-    39
+    33,    34,    35,    35,    36,    36,    36,    36,    36,    37,
+    37,    37,    37,    37,    37,    37,    37,    37,    37,    37,
+    37,    37,    37,    37,    37,    37,    37,    37,    37,    37,
+    37
 };
 
 static const short yyr2[] = {     0,
@@ -631,57 +623,53 @@ static const short yydefgoto[] = {    65,
 };
 
 static const short yypact[] = {   -11,
-    -5,   -18,   -17,   -16,    32,-32768,-32768,-32768,-32768,    37,
-    37,   -22,     0,     1,     2,     3,    37,   -12,    32,    59,
--32768,    93,    93,    37,    12,    13,    14,    21,    85,-32768,
+     6,    18,    19,    17,    32,-32768,-32768,-32768,-32768,    37,
+    37,    22,    39,    41,    42,    44,    37,    31,    32,    57,
+-32768,   102,   102,    37,    43,    45,    46,    53,    81,-32768,
 -32768,    37,    37,    37,    37,    37,    37,    37,    37,    37,
-    37,    37,    37,    37,-32768,    93,-32768,-32768,-32768,-32768,
--32768,   -23,   -23,   -23,   -23,   114,   114,   114,   -23,   -23,
-   -19,   -19,-32768,-32768,    55,    57,-32768
+    37,    37,    37,    37,-32768,   102,-32768,-32768,-32768,-32768,
+-32768,   -15,   -15,   -15,   -15,    -6,    -6,    -6,   -15,   -15,
+   -13,   -13,-32768,-32768,    62,    63,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768,    39,-32768,   -10
+-32768,    54,-32768,   -10
 };
 
 
-#define	YYLAST		142
+#define	YYLAST		128
 
 
 static const short yytable[] = {    22,
-    23,    41,    42,    43,    44,     1,    29,    43,    44,     2,
-     3,    24,     4,    46,     5,    25,    26,    27,    28,    30,
-     0,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+    23,    32,    33,    34,    35,     1,    29,    41,    42,    43,
+    44,    43,    44,    46,    39,    40,    41,    42,    43,    44,
+     2,    52,    53,    54,    55,    56,    57,    58,    59,    60,
     61,    62,    63,    64,     7,     8,     9,    10,    11,     7,
-     8,     9,    10,    11,    47,    48,    49,    12,    13,    14,
-    15,    16,    12,    50,    66,    21,    67,    31,     0,     0,
-    17,     0,     0,     0,     0,    17,    32,    33,    34,    35,
-    36,    37,    38,     0,     0,     0,     0,     0,     0,     0,
-     0,    39,    40,    41,    42,    43,    44,     0,     0,     0,
-     0,    45,    32,    33,    34,    35,    36,    37,    38,     0,
-    32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
-    42,    43,    44,     0,    51,    39,    40,    41,    42,    43,
-    44,    32,    33,    34,    35,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,    39,    40,    41,    42,
-    43,    44
+     8,     9,    10,    11,     3,     5,     4,    12,    13,    14,
+    15,    16,    12,    24,    25,    21,    26,    27,    17,    28,
+    30,    66,    67,    17,    32,    33,    34,    35,    36,    37,
+    38,     0,    31,    47,     0,    48,    49,    39,    40,    41,
+    42,    43,    44,    50,     0,     0,     0,    45,    32,    33,
+    34,    35,    36,    37,    38,     0,     0,     0,     0,     0,
+     0,    39,    40,    41,    42,    43,    44,     0,    51,    32,
+    33,    34,    35,    36,    37,    38,     0,     0,     0,     0,
+     0,     0,    39,    40,    41,    42,    43,    44
 };
 
 static const short yycheck[] = {    10,
-    11,    25,    26,    27,    28,    17,    17,    27,    28,    15,
-    29,    34,    30,    24,    31,    16,    16,    16,    16,    32,
-    -1,    32,    33,    34,    35,    36,    37,    38,    39,    40,
+    11,     8,     9,    10,    11,    17,    17,    23,    24,    25,
+    26,    25,    26,    24,    21,    22,    23,    24,    25,    26,
+    15,    32,    33,    34,    35,    36,    37,    38,    39,    40,
     41,    42,    43,    44,     3,     4,     5,     6,     7,     3,
-     4,     5,     6,     7,    33,    33,    33,    16,    17,    18,
-    19,    20,    16,    33,     0,    19,     0,    19,    -1,    -1,
-    29,    -1,    -1,    -1,    -1,    29,     8,     9,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    -1,    23,    24,    25,    26,    27,    28,    -1,    -1,    -1,
-    -1,    33,     8,     9,    10,    11,    12,    13,    14,    -1,
-     8,     9,    10,    11,    12,    13,    14,    23,    24,    25,
-    26,    27,    28,    -1,    30,    23,    24,    25,    26,    27,
-    28,     8,     9,    10,    11,    -1,    -1,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    23,    24,    25,    26,
-    27,    28
+     4,     5,     6,     7,    27,    29,    28,    16,    17,    18,
+    19,    20,    16,    32,    16,    19,    16,    16,    27,    16,
+    30,     0,     0,    27,     8,     9,    10,    11,    12,    13,
+    14,    -1,    19,    31,    -1,    31,    31,    21,    22,    23,
+    24,    25,    26,    31,    -1,    -1,    -1,    31,     8,     9,
+    10,    11,    12,    13,    14,    -1,    -1,    -1,    -1,    -1,
+    -1,    21,    22,    23,    24,    25,    26,    -1,    28,     8,
+     9,    10,    11,    12,    13,    14,    -1,    -1,    -1,    -1,
+    -1,    -1,    21,    22,    23,    24,    25,    26
 };
 
 #line 352 "/usr/share/bison++/bison.cc"
@@ -1206,121 +1194,101 @@ case 4:
 case 6:
 #line 77 "sintatica.y"
 {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal= yyvsp[-1].label;
-                valor.tipoVariavel = "int"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                yyval.label = geraLabel();
                 yyval.traducao = "";
-                yyval.label = ""; 
+
+                insereTabelaDeSimbolos(yyval,yyvsp[-1],"int");
             ;
     break;}
 case 7:
-#line 89 "sintatica.y"
+#line 84 "sintatica.y"
 {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal= yyvsp[-1].label;
-                valor.tipoVariavel = "float"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                yyval.label = geraLabel();
                 yyval.traducao = "";
-                yyval.label = ""; 
+
+                insereTabelaDeSimbolos(yyval,yyvsp[-1],"float");
             ;
     break;}
 case 8:
-#line 101 "sintatica.y"
+#line 91 "sintatica.y"
 {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal = yyvsp[-1].label;
-                valor.tipoVariavel = "int"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                yyval.label = geraLabel();
                 yyval.traducao = "";
-                yyval.label = ""; 
+
+                insereTabelaDeSimbolos(yyval,yyvsp[-1],"int");
             ;
     break;}
 case 9:
-#line 113 "sintatica.y"
+#line 98 "sintatica.y"
 {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal = yyvsp[-1].label;
-                valor.tipoVariavel = "char"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                yyval.label = geraLabel();
                 yyval.traducao = "";
-                yyval.label = ""; 
+                
+                insereTabelaDeSimbolos(yyval,yyvsp[-1],"char");
             ;
     break;}
 case 10:
-#line 127 "sintatica.y"
+#line 107 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"+");
             ;
     break;}
 case 11:
-#line 131 "sintatica.y"
+#line 111 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"-");
             ;
     break;}
 case 12:
-#line 135 "sintatica.y"
+#line 115 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"*");
             ;
     break;}
 case 13:
-#line 139 "sintatica.y"
+#line 119 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"/");
             ;
     break;}
 case 14:
-#line 143 "sintatica.y"
+#line 123 "sintatica.y"
 {
                yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,">");
             ;
     break;}
 case 15:
-#line 147 "sintatica.y"
+#line 127 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"<");
             ;
     break;}
 case 16:
-#line 151 "sintatica.y"
+#line 131 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,">=");
             ;
     break;}
 case 17:
-#line 155 "sintatica.y"
+#line 135 "sintatica.y"
 {
                yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"<=");
             ;
     break;}
 case 18:
-#line 159 "sintatica.y"
+#line 139 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"==");
             ;
     break;}
 case 19:
-#line 163 "sintatica.y"
+#line 143 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"!=");
             ;
     break;}
 case 20:
-#line 167 "sintatica.y"
+#line 147 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1333,7 +1301,7 @@ case 20:
             ;
     break;}
 case 21:
-#line 178 "sintatica.y"
+#line 158 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1345,7 +1313,7 @@ case 21:
             ;
     break;}
 case 22:
-#line 188 "sintatica.y"
+#line 168 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1357,35 +1325,29 @@ case 22:
             ;
     break;}
 case 23:
-#line 198 "sintatica.y"
+#line 178 "sintatica.y"
 {
                 yyval.tipo = "char";
                 yyval.label = geraLabel();
                 yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
 
                 // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "char";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyval,"char");
             ;
     break;}
 case 24:
-#line 210 "sintatica.y"
+#line 187 "sintatica.y"
 {
                 yyval.tipo = "bool";
                 yyval.label = geraLabel();
                 yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
 
                 // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyval,"int");
             ;
     break;}
 case 25:
-#line 222 "sintatica.y"
+#line 196 "sintatica.y"
 {
                 bool encontrei = false; 
                 TIPO_SIMBOLO variavel; 
@@ -1403,16 +1365,11 @@ case 25:
                 yyval.label = geraLabel();
                 yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.nomeOriginal = yyvsp[0].label;
-                temp.tipoVariavel = variavel.tipoVariavel;
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyvsp[0],variavel.tipoVariavel);
             ;
     break;}
 case 26:
-#line 247 "sintatica.y"
+#line 216 "sintatica.y"
 {
                 bool encontrei = false; 
                 TIPO_SIMBOLO variavel; 
@@ -1433,7 +1390,7 @@ case 26:
             ;
     break;}
 case 27:
-#line 266 "sintatica.y"
+#line 235 "sintatica.y"
 {
                 if(yyvsp[0].tipo == "float")
                 {
@@ -1444,14 +1401,11 @@ case 27:
                 yyval.tipo = "int";
                 yyval.traducao = yyvsp[0].traducao + "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyval,"int");
             ;
     break;}
 case 28:
-#line 282 "sintatica.y"
+#line 248 "sintatica.y"
 {
                 if(yyvsp[0].tipo == "int")
                 {
@@ -1462,45 +1416,32 @@ case 28:
                 yyval.tipo = "float";
                 yyval.traducao = yyvsp[0].traducao + "\t" + yyval.label + " = " + yyvsp[0].label+ ";\n";
 
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "float";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyval,"float");
             ;
     break;}
 case 29:
-#line 298 "sintatica.y"
+#line 261 "sintatica.y"
 {
                 yyval.tipo = "int";
                 yyval.label = geraLabel();
                 yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos(yyval,yyval,"int");
             ;
     break;}
 case 30:
-#line 310 "sintatica.y"
+#line 269 "sintatica.y"
 {
                 yyval.tipo = "float";
                 yyval.label = geraLabel();
                 yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = yyval.label;
-                temp.tipoVariavel = "float";
-                tabelaSimbolos.push_back(temp);
+               insereTabelaDeSimbolos(yyval,yyval,"float");
             ;
     break;}
 case 31:
-#line 322 "sintatica.y"
+#line 277 "sintatica.y"
 {
-                yyval.label = geraLabel();
-                yyval.tipo = yyvsp[-1].tipo;
                 yyval.traducao = yyvsp[-1].traducao;
             ;
     break;}
@@ -1708,7 +1649,7 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 329 "sintatica.y"
+#line 282 "sintatica.y"
 
 
 #include "lex.yy.c"
@@ -1738,6 +1679,16 @@ void yyerror(string MSG)
     cout << MSG << endl;
     exit (0);
 }               
+
+/*Inserir os simbolos na tabela de Símbolos, se a gramática não conter ID 
+considerarei o nome da variável(nome fictício) == ao nome original*/
+void insereTabelaDeSimbolos(atributos a,atributos b,string tipo){
+    TIPO_SIMBOLO temp;
+    temp.nomeVariavel = a.label;
+    temp.nomeOriginal = b.label;
+    temp.tipoVariavel = tipo;
+    tabelaSimbolos.push_back(temp);  
+};
 
 atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
      //Condições para converter de Int para Float
@@ -1779,34 +1730,14 @@ atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
                     c.traducao = a.traducao + b.traducao + "\t" + c.label + 
                         " = " + a.label + caracter + b.label + ";\n";
 
-                    // Atualizar tipo da temporária com base nos tipos dos operandos
-                    TIPO_SIMBOLO temp;
-                    temp.nomeVariavel = c.label;
-                    temp.tipoVariavel = "int";
-                    tabelaSimbolos.push_back(temp);
+                    insereTabelaDeSimbolos(c,c,"int");
                 }
     return c;
-}
-void atribuirTiposTemporarios()
-{
-    for (auto& temp : tabelaSimbolos) {
-        if (temp.nomeVariavel[0] == 'T') {
-            string nomeOriginal = temp.nomeVariavel.substr(1);
-            for (const auto& original : tabelaSimbolos) {
-                if (original.nomeVariavel == nomeOriginal) {
-                    temp.tipoVariavel = original.tipoVariavel;
-                    break;
-                }
-            }
-        }
-    }
 }
 
 void imprimirTabelaDeSimbolos()
 {
-    atribuirTiposTemporarios();
     for(TIPO_SIMBOLO simbolo: tabelaSimbolos){
         cout<<"\t"+simbolo.tipoVariavel+" "+simbolo.nomeVariavel + ";" <<endl;
     }
-
 }

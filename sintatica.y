@@ -30,14 +30,13 @@ void yyerror(string);
 string geraLabel();
 void imprimirTabelaDeSimbolos();
 atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
-
+void insereTabelaDeSimbolos(atributos a, atributos b, string tipo);
 
 %}
 
 %token TK_NUM TK_REAL TK_CHAR TK_CAST_INT TK_CAST_FLOAT TK_MA TK_ME TK_DF TK_IG TK_OU TK_NO TK_E 
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR
-%token TK_FIM TK_ERROR
-
+%token 
 %start S
 
 //Ordem de precedência 
@@ -45,6 +44,7 @@ atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
 %left '>' '<'  TK_MA TK_ME TK_IG TK_DF 
 %left '+' '-' 
 %left '*' '/'
+%left '(' ')'
 
 %%
 
@@ -75,51 +75,31 @@ COMANDOS    : COMANDO COMANDOS
 COMANDO     : E ';'
             | TK_TIPO_INT TK_ID ';'
             {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal= $2.label;
-                valor.tipoVariavel = "int"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                $$.label = geraLabel();
                 $$.traducao = "";
-                $$.label = ""; 
+
+                insereTabelaDeSimbolos($$,$2,"int");
             }
             | TK_TIPO_FLOAT TK_ID ';'
             {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal= $2.label;
-                valor.tipoVariavel = "float"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                $$.label = geraLabel();
                 $$.traducao = "";
-                $$.label = ""; 
+
+                insereTabelaDeSimbolos($$,$2,"float");
             }
             | TK_TIPO_BOOL TK_ID ';'
             {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal = $2.label;
-                valor.tipoVariavel = "int"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                $$.label = geraLabel();
                 $$.traducao = "";
-                $$.label = ""; 
+
+                insereTabelaDeSimbolos($$,$2,"int");
             }
             | TK_TIPO_CHAR TK_ID ';'
             {
-                TIPO_SIMBOLO valor;
-                valor.nomeVariavel = geraLabel();
-                valor.nomeOriginal = $2.label;
-                valor.tipoVariavel = "char"; 
-
-                tabelaSimbolos.push_back(valor);
-
+                $$.label = geraLabel();
                 $$.traducao = "";
-                $$.label = ""; 
+                
+                insereTabelaDeSimbolos($$,$2,"char");
             }
             ;
 
@@ -201,10 +181,7 @@ E           : E '+' E
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
                 // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "char";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$$,"char");
             }
             | TK_TIPO_BOOL
             {
@@ -213,10 +190,7 @@ E           : E '+' E
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
                 // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$$,"int");
             }
             | TK_ID
             {
@@ -236,12 +210,7 @@ E           : E '+' E
                 $$.label = geraLabel();
                 $$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.nomeOriginal = $1.label;
-                temp.tipoVariavel = variavel.tipoVariavel;
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$1,variavel.tipoVariavel);
             }
             | TK_ID '=' E
             {
@@ -273,10 +242,7 @@ E           : E '+' E
                 $$.tipo = "int";
                 $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label + ";\n";
 
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$$,"int");
             }
             | TK_CAST_FLOAT E
             {
@@ -289,10 +255,7 @@ E           : E '+' E
                 $$.tipo = "float";
                 $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label+ ";\n";
 
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "float";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$$,"float");
             }
             | TK_NUM 
             {
@@ -300,11 +263,7 @@ E           : E '+' E
                 $$.label = geraLabel();
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "int";
-                tabelaSimbolos.push_back(temp);
+                insereTabelaDeSimbolos($$,$$,"int");
             }
             | TK_REAL
             {
@@ -312,16 +271,10 @@ E           : E '+' E
                 $$.label = geraLabel();
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                TIPO_SIMBOLO temp;
-                temp.nomeVariavel = $$.label;
-                temp.tipoVariavel = "float";
-                tabelaSimbolos.push_back(temp);
+               insereTabelaDeSimbolos($$,$$,"float");
             }
             |'(' E ')'
             {
-                $$.label = geraLabel();
-                $$.tipo = $2.tipo;
                 $$.traducao = $2.traducao;
             }
             ;
@@ -355,6 +308,16 @@ void yyerror(string MSG)
     cout << MSG << endl;
     exit (0);
 }               
+
+/*Inserir os simbolos na tabela de Símbolos, se a gramática não conter ID 
+considerarei o nome da variável(nome fictício) == ao nome original*/
+void insereTabelaDeSimbolos(atributos a,atributos b,string tipo){
+    TIPO_SIMBOLO temp;
+    temp.nomeVariavel = a.label;
+    temp.nomeOriginal = b.label;
+    temp.tipoVariavel = tipo;
+    tabelaSimbolos.push_back(temp);  
+};
 
 atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
      //Condições para converter de Int para Float
@@ -396,34 +359,14 @@ atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
                     c.traducao = a.traducao + b.traducao + "\t" + c.label + 
                         " = " + a.label + caracter + b.label + ";\n";
 
-                    // Atualizar tipo da temporária com base nos tipos dos operandos
-                    TIPO_SIMBOLO temp;
-                    temp.nomeVariavel = c.label;
-                    temp.tipoVariavel = "int";
-                    tabelaSimbolos.push_back(temp);
+                    insereTabelaDeSimbolos(c,c,"int");
                 }
     return c;
-}
-void atribuirTiposTemporarios()
-{
-    for (auto& temp : tabelaSimbolos) {
-        if (temp.nomeVariavel[0] == 'T') {
-            string nomeOriginal = temp.nomeVariavel.substr(1);
-            for (const auto& original : tabelaSimbolos) {
-                if (original.nomeVariavel == nomeOriginal) {
-                    temp.tipoVariavel = original.tipoVariavel;
-                    break;
-                }
-            }
-        }
-    }
 }
 
 void imprimirTabelaDeSimbolos()
 {
-    atribuirTiposTemporarios();
     for(TIPO_SIMBOLO simbolo: tabelaSimbolos){
         cout<<"\t"+simbolo.tipoVariavel+" "+simbolo.nomeVariavel + ";" <<endl;
     }
-
 }
