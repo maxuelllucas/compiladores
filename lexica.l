@@ -16,6 +16,7 @@ OPERADOR("+"|"-"|"*"|"*")
 EXPRESSAO({ID}{NUM})({OPERADOR}({ID}{NUM}))+
 ATRIBUICAO {ID} (=) {EXPRESSAO}
 
+
 %%
 
 "\n"		{}
@@ -26,15 +27,17 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "int"		{return TK_TIPO_INT;}
 
-"float"       {return TK_TIPO_FLOAT;}
+"if"        {return TK_IF;}
+
+"else"      {return TK_ELSE;}
+
+"else if"   {return TK_ELSE_IF;}
+
+"float"     {return TK_TIPO_FLOAT;}
 
 "bool"      {return TK_TIPO_BOOL;}
 
 "char"      {return TK_TIPO_CHAR;}
-
-"false"     {return TK_TIPO_BOOL;}
-
-"true"      {return TK_TIPO_BOOL;}
 
 "(int)"     {return TK_CAST_INT;}
 

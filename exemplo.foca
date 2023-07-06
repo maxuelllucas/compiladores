@@ -1,22 +1,41 @@
 int main()
 {
-  int a;
+  int a; 
+  a = 7;
+
+  if(5>2){
+    a = 8;
+  }
+
+  else if(99>15){
+    a = 88;
+  }
+
+  else if(99>15){
+    a = 88;
+  }
 
 
-{
-  int c;
- 
-}  
+  else if(99>15){
+    a = 88;
+  }
+  
+  
+  else{
+    a = 9;
+    a = 1.0 > 1 || true;
+  }
 
-{
-  c = 5;
-}
- float ca;
-{
-  1 + 6;
-}
-
-int cS;
- 
+  { 
+    int b;
+    b = 10;
+  }
+  {
+    int c;
+    c = 45;
+  }
+  {
+    20;
+  }
 
 }
