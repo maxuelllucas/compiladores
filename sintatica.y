@@ -28,8 +28,10 @@ vector<TIPO_SIMBOLO> tabelaSimbolos;
 int yylex(void);
 void yyerror(string);
 string geraLabel();
+string contaBloco();
 void imprimirTabelaDeSimbolos();
 atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
+atributos tipoID(atributos a, atributos b,atributos c, string tipo);
 void insereTabelaDeSimbolos(atributos a,  string tipo);
 void insereID(atributos a,  string tipo);
 
@@ -37,8 +39,9 @@ void insereID(atributos a,  string tipo);
 
 %}
 
-%token TK_NUM TK_REAL TK_CHAR TK_CAST_INT TK_CAST_FLOAT TK_MA TK_ME TK_DF TK_IG TK_OU TK_NO TK_E 
-%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR TK_IF TK_ELSE TK_ELSE_IF
+%token TK_NUM TK_REAL TK_CHAR TK_CAST_INT TK_CAST_FLOAT TK_MA TK_ME TK_DF TK_IG TK_OU TK_NO TK_E TK_INCREMENTO TK_DECREMENTO
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR 
+%token TK_IF TK_ELSE TK_ELSE_IF TK_WHILE TK_FOR
 %token TK_FIM TK_ERROR
 
 %start S
@@ -70,47 +73,55 @@ COMANDOS    : COMANDO COMANDOS
             {
                 $$.traducao = $1.traducao + $2.traducao;
             }
-            |//BLOCOS
-             '{' COMANDOS '}' COMANDOS
-            {
-                
-                $$.traducao = $2.traducao + $4.traducao;
-            }
             |
             {
                 $$.traducao = "";
             }
             ;
-            //IF
-CONDICAO    :TK_IF '(' E ')''{' COMANDOS '}'
+            
+CONDICAO    :TK_IF '(' CALC ')' BLOCO
             {
                 $$.label = geraLabel();
-                $$.tipo = $1.tipo;
-                insereTabelaDeSimbolos($$,"bool");
+                insereTabelaDeSimbolos($$,"int");
                 $$.traducao =$3.traducao + "\t" + $$.label + " != " + $3.label + ";\n"; 
-                $$.traducao+="\tIF(" + $$.label + ") GoTo FIM_IF;\n" + $6.traducao + "\tFIM_IF:\n\n";
+                $$.traducao+="\tIF(" + $$.label + ") GOTO FIM_IF;\n" + $5.traducao + "\tFIM_IF;\n\n";
             }
-            |TK_ELSE_IF '(' E ')''{' COMANDOS '}' 
+            |TK_ELSE_IF '(' CALC ')' BLOCO
             {
                 $$.label = geraLabel();
-                $$.tipo = $1.tipo;
-                insereTabelaDeSimbolos($$,"bool");
+                insereTabelaDeSimbolos($$,"int");
                 $$.traducao = $3.traducao + "\t" + $$.label + " != " + $3.label + ";\n"; 
-                $$.traducao+="\tIF("+ $$.label + ") GoTo FIM_ELSE_IF;\n" + $6.traducao + "\tFIM_ELSE_IF:\n\n";
-            } 
-            ;
-            //ELSE
-CONDICAO2   :
-            CONDICAO TK_ELSE '{' COMANDOS '}'
-            {
-                $$.traducao= $1.traducao + "\tIF(!" + $1.label + ") GoTo FIM_ELSE;\n" + $4.traducao + "\tFIM_ELSE:\n\n";
+                $$.traducao+="\tIF("+ $$.label + ") GOTO FIM_ELSE_IF;\n" + $5.traducao + "\tFIM_ELSE_IF;\n\n";
             }
-            ;
-COMANDO     : E ';'
+            //else
+            |CONDICAO TK_ELSE BLOCO
+            {
+                $$.traducao= $1.traducao + "\tIF(!" + $1.label + ") GOTO FIM_ELSE;\n" + $3.traducao + "\tFIM_ELSE;\n\n";
+            }
+            |
+            TK_WHILE '(' E ')' BLOCO
+            {
+                $$.label = geraLabel();
+                string tempVar = geraLabel();
+                string numWhile = contaBloco();
+                insereTabelaDeSimbolos($$,"int");
+                $$.traducao ="INICIO_WHILE "+ numWhile +":\n"+ $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n\t" + tempVar + " = !" + $$.label + "\n"; 
+                $$.traducao+="\tIF(" + tempVar + ") GOTO FIM_WHILE"+ numWhile +";\n" + $5.traducao + "\tGOTO INICIO_WHILE"+ numWhile +"\n" +"FIM_WHILE " + numWhile + ";\n\n";
+            }
+            |TK_FOR '('CALC ';' E ';' CALC')' BLOCO
+            {
+                $$.label = geraLabel();
+                string tempVar = geraLabel();
+                string numFor = contaBloco();
+                insereTabelaDeSimbolos($$,"int");
+                $$.traducao ="INICIO_FOR "+ numFor +":\n"+ $3.traducao + $5.traducao + "\t" + $$.label + " = " + $5.label + ";\n\t" + tempVar + " = !" + $$.label + "\n"; 
+                $$.traducao+="\tIF(" + tempVar + ") GOTO FIM_FOR"+ numFor +";\n" + $9.traducao + $7.traducao +"\tGOTO INICIO_FOR"+ numFor +"\n" +"FIM_FOR " + numFor + ";\n\n";
+            }
+            ; 
+COMANDO     : E ';'         
+            |BLOCO
             |
             CONDICAO
-            |
-            CONDICAO2
             | TK_TIPO_INT TK_ID ';'
             {
                 insereID($2,"int");
@@ -141,54 +152,56 @@ COMANDO     : E ';'
             }
             ;
 
-E           : E '+' E
+E           : CALC  
+            |
+            CALC '+' CALC
             {
                 $$ = converteTipo($1, $3,$$,"+");
             }
-            | E '-' E
+            | CALC '-' CALC
             {
                 $$ = converteTipo($1, $3,$$,"-");
             }
-            | E '*' E
+            | CALC '*' CALC
             {
                 $$ = converteTipo($1, $3,$$,"*");
             }
-            | E '/' E
+            | CALC '/' CALC
             {
                 $$ = converteTipo($1, $3,$$,"/");
             }
-            | E '>' E
+            | CALC '>' CALC
             {
                $$ = converteTipo($1, $3,$$,">");
                //Convertendo o tipo para Bool nos relacionais para poder fazer comparação com os lógicos
                $$.tipo = "bool";
             }
-            | E '<' E
+            | CALC '<' CALC
             {
                 $$ = converteTipo($1, $3,$$,"<");
                 $$.tipo = "bool";
             }
-            | E TK_MA E
+            | CALC TK_MA CALC
             {
                 $$ = converteTipo($1, $3,$$,">=");
                 $$.tipo = "bool";
             }
-            | E TK_ME E
+            | CALC TK_ME CALC
             {
                $$ = converteTipo($1, $3,$$,"<=");
                $$.tipo = "bool";
             }
-            | E TK_IG E
+            | CALC TK_IG CALC
             {
                 $$ = converteTipo($1, $3,$$,"==");
                 $$.tipo = "bool";
             }
-            | E TK_DF E
+            | CALC TK_DF CALC
             {
                 $$ = converteTipo($1, $3,$$," != ");
                 $$.tipo = "bool";
             }
-            | E TK_OU E
+            | CALC TK_OU CALC
             {
                 if ($1.tipo != "bool" || $3.tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -196,7 +209,7 @@ E           : E '+' E
 
                 $$ = converteTipo($1, $3,$$," || ");
             }
-            | E TK_E E
+            | CALC TK_E CALC
             {
                 if ($1.tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -206,7 +219,7 @@ E           : E '+' E
                 }
                 $$ = converteTipo($1, $3,$$," && ");
             }
-            | E TK_NO E
+            | CALC TK_NO CALC
             {
                 if ($1.tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -215,6 +228,57 @@ E           : E '+' E
                     yyerror("ERRO! Operação inválida");
                 }
                 $$ = converteTipo($1, $3,$$," ! ");
+            }
+            ;
+CALC        : TK_CAST_INT CALC
+            {
+                if($2.tipo == "float")
+                {
+                    $2.label = "(int)" + $2.label;
+                    $2.tipo = "int";
+                }
+                $$.label = geraLabel();
+                $$.tipo = "int";
+                $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label + ";\n";
+
+                insereTabelaDeSimbolos($$,"int");
+            }
+            | TK_CAST_FLOAT CALC
+            {
+                if($2.tipo == "int")
+                {
+                    $2.label = "(float)" + $2.label;
+                    $2.tipo = "float";
+                }
+                $$.label = geraLabel();
+                $$.tipo = "float";
+                $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label+ ";\n";
+
+                insereTabelaDeSimbolos($$,"float");
+            }
+            | TK_NUM 
+            {
+                $$.tipo = "int";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                insereTabelaDeSimbolos($$,"int");
+            }
+            | TK_REAL
+            {
+                $$.tipo = "float";
+                $$.label = geraLabel();
+                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+
+                // Adicionar variável temporária na tabela de símbolos
+                insereTabelaDeSimbolos($$,"float");
+            }
+            |
+            {
+                $$.label = geraLabel();
+                $$.traducao ="\t" + $$.label + " = " + "true;\n";
+                insereTabelaDeSimbolos($$,"int");
             }
             | TK_CHAR
             {
@@ -271,7 +335,7 @@ E           : E '+' E
                     tabelaSimbolos.push_back(temp);
                 }
             }
-            | TK_ID '=' E
+            | TK_ID '=' CALC
             {
                 bool encontrei = false; 
                 TIPO_SIMBOLO variavel; 
@@ -290,55 +354,95 @@ E           : E '+' E
                 $$.traducao = $3.traducao + "\t" + variavel.nomeVariavel + " = " + $3.label + ";\n";
 
             }
-            | TK_CAST_INT E
+            | TK_ID TK_INCREMENTO
             {
-                if($2.tipo == "float")
-                {
-                    $2.label = "(int)" + $2.label;
-                    $2.tipo = "int";
+                if($1.label == "true" || $1.label == "false"){
+                    $$.label = geraLabel();
+                    insereTabelaDeSimbolos($$,"int");
+                    $$.tipo = "bool";
+                    $$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
                 }
-                $$.label = geraLabel();
-                $$.tipo = "int";
-                $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label + ";\n";
+                else{
+                    bool encontrei = false; 
+                    TIPO_SIMBOLO variavel; 
+                    for (int i = 0; i < tabelaSimbolos.size(); i++){
+                        if(tabelaSimbolos[i].nomeOriginal == $1.label){
+                            variavel = tabelaSimbolos[i];
+                            encontrei = true;
+                        }
+                    }
+                    if(!encontrei){
+                        if($1.label == "true" || $1.label == "false"){
+                            $$.tipo = "bool";
+                        } 
+                    else{
+                        yyerror("Variavel não declarada!");}
+                    }
 
-                insereTabelaDeSimbolos($$,"int");
-            }
-            | TK_CAST_FLOAT E
-            {
-                if($2.tipo == "int")
-                {
-                    $2.label = "(float)" + $2.label;
-                    $2.tipo = "float";
+                    $$.tipo = variavel.tipoVariavel; 
+                    $$.label = geraLabel();
+                    $$.traducao = "\t" + $$.label + " = " + $1.label + "++;\n";
+
+                    // Adicionar variável temporária na tabela de símbolos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.nomeOriginal = $1.label;
+                    temp.tipoVariavel = variavel.tipoVariavel;
+                    tabelaSimbolos.push_back(temp);
                 }
-                $$.label = geraLabel();
-                $$.tipo = "float";
-                $$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label+ ";\n";
-
-                insereTabelaDeSimbolos($$,"float");
             }
-            | TK_NUM 
+            | TK_ID TK_DECREMENTO
             {
-                $$.tipo = "int";
-                $$.label = geraLabel();
-                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+                if($1.label == "true" || $1.label == "false"){
+                    $$.label = geraLabel();
+                    insereTabelaDeSimbolos($$,"int");
+                    $$.tipo = "bool";
+                    $$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+                }
+                else{
+                    bool encontrei = false; 
+                    TIPO_SIMBOLO variavel; 
+                    for (int i = 0; i < tabelaSimbolos.size(); i++){
+                        if(tabelaSimbolos[i].nomeOriginal == $1.label){
+                            variavel = tabelaSimbolos[i];
+                            encontrei = true;
+                        }
+                    }
+                    if(!encontrei){
+                        if($1.label == "true" || $1.label == "false"){
+                            $$.tipo = "bool";
+                        } 
+                    else{
+                        yyerror("Variavel não declarada!");}
+                    }
 
-                // Adicionar variável temporária na tabela de símbolos
-                insereTabelaDeSimbolos($$,"int");
-            }
-            | TK_REAL
-            {
-                $$.tipo = "float";
-                $$.label = geraLabel();
-                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+                    $$.tipo = variavel.tipoVariavel; 
+                    $$.label = geraLabel();
+                    $$.traducao = "\t" + $$.label + " = " + $1.label + "--;\n";
 
-                // Adicionar variável temporária na tabela de símbolos
-                insereTabelaDeSimbolos($$,"float");
+                    // Adicionar variável temporária na tabela de símbolos
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = $$.label;
+                    temp.nomeOriginal = $1.label;
+                    temp.tipoVariavel = variavel.tipoVariavel;
+                    tabelaSimbolos.push_back(temp);
+                }
             }
-            |
+            |TK_TIPO_INT TK_ID '=' CALC
             {
-                $$.label = geraLabel();
-                $$.traducao ="\t" + $$.label + " = " + "true;\n";
-                insereTabelaDeSimbolos($$,"int");
+                $$ = tipoID($2, $4,$$,"int");
+            }
+            |TK_TIPO_CHAR TK_ID '=' CALC
+            {
+                $$ = tipoID($2, $4,$$,"char");
+            }
+            |TK_TIPO_BOOL TK_ID '=' CALC
+            {
+                $$ = tipoID($2, $4,$$,"bool");
+            }
+            |TK_TIPO_FLOAT TK_ID '=' CALC
+            {
+                $$ = tipoID($2, $4,$$,"float");
             }
             ;
 
@@ -355,6 +459,16 @@ string geraLabel()
     stringstream ss;
     ss << "T" << i++;
 
+    return ss.str();
+}
+
+//Contador para saber Onde os blocos começam e terminam
+string contaBloco()
+{
+    static int i = 1;
+
+    stringstream ss;
+    ss << "" << i++;
     return ss.str();
 }
 
@@ -448,8 +562,29 @@ atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
     return c;
 }
 
-void imprimirTabelaDeSimbolos()
-{
+atributos tipoID(atributos a, atributos b,atributos c, string tipo){
+    // Adicionar variável temporária na tabela de símbolos
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = geraLabel();
+        temp.nomeOriginal = a.label;
+        temp.tipoVariavel = tipo;
+
+        for (int i = 0; i < tabelaSimbolos.size(); i++){
+            if(tabelaSimbolos[i].nomeOriginal == temp.nomeOriginal){
+                yyerror("Variável já declarada");
+            }
+        }
+        tabelaSimbolos.push_back(temp);
+        
+        c.tipo = temp.tipoVariavel; // Usar o tipo da variável original
+        a.label = temp.nomeOriginal;
+        c.traducao = b.traducao + "\t" + temp.nomeVariavel + " = " + b.label + ";\n";
+
+        return c;
+
+}
+
+void imprimirTabelaDeSimbolos(){
     for(TIPO_SIMBOLO simbolo: tabelaSimbolos){
         cout<<"\t"+simbolo.tipoVariavel+" "+simbolo.nomeVariavel + ";" <<endl;
     }

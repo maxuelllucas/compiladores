@@ -27,11 +27,19 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "int"		{return TK_TIPO_INT;}
 
+"++"        {return TK_INCREMENTO;}
+
+"--"        {return TK_DECREMENTO;}
+
 "if"        {return TK_IF;}
 
 "else"      {return TK_ELSE;}
 
 "else if"   {return TK_ELSE_IF;}
+
+"while"    {return TK_WHILE;}
+
+"for"    {return TK_FOR;}
 
 "float"     {return TK_TIPO_FLOAT;}
 
