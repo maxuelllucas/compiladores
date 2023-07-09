@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <stack>
 
 #define YYSTYPE atributos
 
@@ -20,28 +21,38 @@ typedef struct
     string nomeVariavel;
     string tipoVariavel;
     string nomeOriginal;
+    stack<int>escopo;
 
 } TIPO_SIMBOLO; 
 
-vector<TIPO_SIMBOLO> tabelaSimbolos;
+//GLOBAIS
 
+vector<TIPO_SIMBOLO> tabelaSimbolos;
+int numBloco;
+stack<int>escopoAtual;
 int yylex(void);
 void yyerror(string);
 string geraLabel();
 string contaBloco();
 void imprimirTabelaDeSimbolos();
-atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
 atributos tipoID(atributos a, atributos b,atributos c, string tipo);
+atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
 void insereTabelaDeSimbolos(atributos a,  string tipo);
 void insereID(atributos a,  string tipo);
 
+void printpilhasdeSimbolos()
+{
+    for(int i = 0; i < tabelaSimbolos.size(); i++)
+    {
+        cout << "\t" << tabelaSimbolos[i].escopo.top()<< " " <<tabelaSimbolos[i].nomeVariavel<<endl;
+    }
+} 
 
 
 %}
 
-%token TK_NUM TK_REAL TK_CHAR TK_CAST_INT TK_CAST_FLOAT TK_MA TK_ME TK_DF TK_IG TK_OU TK_NO TK_E TK_INCREMENTO TK_DECREMENTO
-%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR 
-%token TK_IF TK_ELSE TK_ELSE_IF TK_WHILE TK_FOR
+%token TK_NUM TK_REAL TK_CHAR TK_CAST_INT TK_CAST_FLOAT TK_MA TK_ME TK_DF TK_IG TK_OU TK_NO TK_E 
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOL TK_TIPO_CHAR TK_IF TK_ELSE TK_ELSE_IF TK_WHILE TK_INCREMENTO TK_DECREMENTO TK_FOR
 %token TK_FIM TK_ERROR
 
 %start S
@@ -59,15 +70,32 @@ S           : TK_TIPO_INT TK_MAIN '('')' BLOCO
             {
                 cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
                 imprimirTabelaDeSimbolos();
-                cout << $5.traducao << "\treturn 0;\n}" << endl;
+                cout << $5.traducao << "\treturn 0;\n\n}" << endl;
+                printpilhasdeSimbolos();
             }
             ;
 
-BLOCO       : '{' COMANDOS '}'
+BLOCO       : '{'INICIO COMANDOS FIM'}'
             {
-                $$.traducao = $2.traducao;
+                $$.traducao = $3.traducao ;
+                
             }
             ;
+INICIO      : 
+            {
+                //Diferenciar o número dos blocos
+                numBloco++;
+                escopoAtual.push(numBloco);
+                $$.traducao = "";
+            }
+            ;
+FIM         :
+            {
+                escopoAtual.pop();
+                $$.traducao = "";
+            } 
+            ;
+            
 
 COMANDOS    : COMANDO COMANDOS
             {
@@ -78,15 +106,15 @@ COMANDOS    : COMANDO COMANDOS
                 $$.traducao = "";
             }
             ;
-            
-CONDICAO    :TK_IF '(' CALC ')' BLOCO
+            //IF
+CONDICAO    :TK_IF '(' E ')' BLOCO
             {
                 $$.label = geraLabel();
                 insereTabelaDeSimbolos($$,"int");
                 $$.traducao =$3.traducao + "\t" + $$.label + " != " + $3.label + ";\n"; 
                 $$.traducao+="\tIF(" + $$.label + ") GOTO FIM_IF;\n" + $5.traducao + "\tFIM_IF;\n\n";
             }
-            |TK_ELSE_IF '(' CALC ')' BLOCO
+            |TK_ELSE_IF '(' E ')' BLOCO
             {
                 $$.label = geraLabel();
                 insereTabelaDeSimbolos($$,"int");
@@ -117,9 +145,10 @@ CONDICAO    :TK_IF '(' CALC ')' BLOCO
                 $$.traducao ="INICIO_FOR "+ numFor +":\n"+ $3.traducao + $5.traducao + "\t" + $$.label + " = " + $5.label + ";\n\t" + tempVar + " = !" + $$.label + "\n"; 
                 $$.traducao+="\tIF(" + tempVar + ") GOTO FIM_FOR"+ numFor +";\n" + $9.traducao + $7.traducao +"\tGOTO INICIO_FOR"+ numFor +"\n" +"FIM_FOR " + numFor + ";\n\n";
             }
-            ; 
+            ;
 COMANDO     : E ';'         
-            |BLOCO
+            |
+            BLOCO
             |
             CONDICAO
             | TK_TIPO_INT TK_ID ';'
@@ -138,7 +167,7 @@ COMANDO     : E ';'
             }
             | TK_TIPO_BOOL TK_ID ';'
             {
-                insereID($2,"int");
+                insereID($2,"bool");
 
                 $$.traducao = "";
                 $$.label = ""; 
@@ -152,8 +181,7 @@ COMANDO     : E ';'
             }
             ;
 
-E           : CALC  
-            |
+E           : 
             CALC '+' CALC
             {
                 $$ = converteTipo($1, $3,$$,"+");
@@ -203,9 +231,7 @@ E           : CALC
             }
             | CALC TK_OU CALC
             {
-                if ($1.tipo != "bool" || $3.tipo != "bool"){
-                    yyerror("ERRO! Operação inválida");
-                }
+               
 
                 $$ = converteTipo($1, $3,$$," || ");
             }
@@ -258,7 +284,7 @@ CALC        : TK_CAST_INT CALC
             }
             | TK_NUM 
             {
-                $$.tipo = "int";
+                $$.tipo = "bool";
                 $$.label = geraLabel();
                 $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
 
@@ -309,8 +335,8 @@ CALC        : TK_CAST_INT CALC
                 else{
                     bool encontrei = false; 
                     TIPO_SIMBOLO variavel; 
-                    for (int i = 0; i < tabelaSimbolos.size(); i++){
-                        if(tabelaSimbolos[i].nomeOriginal == $1.label){
+                    for (int i =  tabelaSimbolos.size(); i >= 0; i--){
+                        if(tabelaSimbolos[i].nomeOriginal == $1.label && tabelaSimbolos[i].escopo.size() <= escopoAtual.size() && tabelaSimbolos[i].escopo.top()<= escopoAtual.top()){
                             variavel = tabelaSimbolos[i];
                             encontrei = true;
                         }
@@ -331,11 +357,12 @@ CALC        : TK_CAST_INT CALC
                     TIPO_SIMBOLO temp;
                     temp.nomeVariavel = $$.label;
                     temp.nomeOriginal = $1.label;
+                    temp.escopo = escopoAtual;
                     temp.tipoVariavel = variavel.tipoVariavel;
                     tabelaSimbolos.push_back(temp);
                 }
             }
-            | TK_ID '=' CALC
+            | TK_ID '=' E 
             {
                 bool encontrei = false; 
                 TIPO_SIMBOLO variavel; 
@@ -348,10 +375,34 @@ CALC        : TK_CAST_INT CALC
                 if(!encontrei){
                     yyerror("Variavel não declarada!");
                 }
-                
-                $$.tipo = $1.tipo; // Usar o tipo da variável original
+
+                if(variavel.tipoVariavel=="int" && $3.tipo =="float")
+		        {
+                    string tempVar = geraLabel();
+		        	$$.label = geraLabel();
+                    $$.traducao = $3.traducao + "\t" + tempVar + " = (int)"+ $3.label + ";\n\t" + variavel.nomeVariavel + " = " + tempVar + ";\n";
+
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar;
+                    temp.escopo = escopoAtual;
+                    temp.tipoVariavel = variavel.tipoVariavel;
+                    tabelaSimbolos.push_back(temp);
+		        }
+                else if(variavel.tipoVariavel=="float" && $3.tipo =="int")
+		        {
+                    string tempVar = geraLabel();
+		        	$$.label = geraLabel();
+                    $$.traducao = $3.traducao + "\t" + tempVar + " = (float)"+$3.label + ";\n\t" + variavel.nomeVariavel + " = " + tempVar + ";\n";
+
+                    TIPO_SIMBOLO temp;
+                    temp.nomeVariavel = tempVar;
+                    temp.escopo = escopoAtual;
+                    temp.tipoVariavel = variavel.tipoVariavel;
+                    tabelaSimbolos.push_back(temp);
+		        }
+                else{
                 $$.label = geraLabel();
-                $$.traducao = $3.traducao + "\t" + variavel.nomeVariavel + " = " + $3.label + ";\n";
+                $$.traducao = $3.traducao + "\t" + variavel.nomeVariavel + " = " + $3.label + ";\n";}
 
             }
             | TK_ID TK_INCREMENTO
@@ -387,6 +438,7 @@ CALC        : TK_CAST_INT CALC
                     TIPO_SIMBOLO temp;
                     temp.nomeVariavel = $$.label;
                     temp.nomeOriginal = $1.label;
+                    temp.escopo = escopoAtual;
                     temp.tipoVariavel = variavel.tipoVariavel;
                     tabelaSimbolos.push_back(temp);
                 }
@@ -413,7 +465,7 @@ CALC        : TK_CAST_INT CALC
                             $$.tipo = "bool";
                         } 
                     else{
-                        yyerror("Variavel não declarada!");}
+                        yyerror("Variável não declarada!");}
                     }
 
                     $$.tipo = variavel.tipoVariavel; 
@@ -424,6 +476,7 @@ CALC        : TK_CAST_INT CALC
                     TIPO_SIMBOLO temp;
                     temp.nomeVariavel = $$.label;
                     temp.nomeOriginal = $1.label;
+                    temp.escopo = escopoAtual;
                     temp.tipoVariavel = variavel.tipoVariavel;
                     tabelaSimbolos.push_back(temp);
                 }
@@ -440,7 +493,7 @@ CALC        : TK_CAST_INT CALC
             {
                 $$ = tipoID($2, $4,$$,"bool");
             }
-            |TK_TIPO_FLOAT TK_ID '=' CALC
+            |TK_TIPO_FLOAT TK_ID '=' E
             {
                 $$ = tipoID($2, $4,$$,"float");
             }
@@ -462,11 +515,10 @@ string geraLabel()
     return ss.str();
 }
 
-//Contador para saber Onde os blocos começam e terminam
+//Diferenciar os loops dentro de outros loops
 string contaBloco()
 {
     static int i = 1;
-
     stringstream ss;
     ss << "" << i++;
     return ss.str();
@@ -474,7 +526,8 @@ string contaBloco()
 
 int main(int argc, char* argv[])
 {
-
+    numBloco = 0;
+    escopoAtual.push(numBloco);
     yyparse();
 
     return 0;
@@ -490,101 +543,130 @@ void insereTabelaDeSimbolos(atributos a,string tipo){
     TIPO_SIMBOLO temp;
     temp.nomeVariavel = a.label;
     temp.tipoVariavel = tipo;
+    temp.escopo = escopoAtual;
     tabelaSimbolos.push_back(temp);  
 };
 
 //Inserindo os tokens de ID na tabela de símbolos
 void insereID(atributos a,string tipo){
-    TIPO_SIMBOLO valor;
-    valor.nomeVariavel = geraLabel();
-    valor.nomeOriginal = a.label;
-    valor.tipoVariavel = tipo; 
+    TIPO_SIMBOLO temp;
+    temp.nomeVariavel = geraLabel();
+    temp.escopo = escopoAtual;
+    temp.nomeOriginal = a.label;
+    temp.tipoVariavel = tipo; 
     
     for(int i = 0; i < tabelaSimbolos.size(); i++)
 	{
-		if(tabelaSimbolos[i].nomeOriginal == valor.nomeOriginal)
+		if(tabelaSimbolos[i].nomeOriginal == temp.nomeOriginal && tabelaSimbolos[i].escopo.top() == escopoAtual.top())
 		{
 			yyerror("Variavel já declarada!");
 		}
 	}
-    tabelaSimbolos.push_back(valor);
+    tabelaSimbolos.push_back(temp);
 };
 
 atributos converteTipo(atributos a, atributos b,atributos c, string caracter){
-     //Condições para converter de Int para Float
-                if (a.tipo == "char" || b.tipo == "char") {
-                    yyerror("Erro. Operação inválida!");
-                }
-                if (a.tipo == "int" && b.tipo == "float") {
-                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
-                    c.label = geraLabel();
-                    c.tipo = "float";
-
-                    c.traducao = a.traducao +  b.traducao + "\t" + tempVar + " = (float)" + a.label + ";\n";
-                    c.traducao += "\t" + c.label + " = " + b.label + caracter + tempVar + ";\n";
-                    
-
-                    // Atualizar tipo da temporária com base nos tipos dos operandos
-                    TIPO_SIMBOLO temp;
-                    temp.nomeVariavel = tempVar + ";\n\t"+ "int" + " " + c.label;
-                    temp.tipoVariavel = "float";
-                    tabelaSimbolos.push_back(temp);
-                } 
-                
-                else if (a.tipo == "float" && b.tipo == "int") {
-                    string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
-                    c.label = geraLabel();
-                    c.tipo = "float";
-
-                    c.traducao =a.traducao +  b.traducao + "\t" + tempVar + " = (float)" + b.label + ";\n";
-                    c.traducao += "\t" + c.label + " = " + a.label + caracter + tempVar + ";\n";
-
-                    // Atualizar tipo da temporária com base nos tipos dos operandos
-                    TIPO_SIMBOLO temp;
-                    temp.nomeVariavel = tempVar + ";\n\t"+ "int" + " " + c.label;
-                    temp.tipoVariavel = "float";
-                    tabelaSimbolos.push_back(temp);
-                } 
-                
-                else {
-                    
-                    c.label = geraLabel();
-                    c.tipo = a.tipo;
-                    c.traducao = a.traducao + b.traducao + "\t" + c.label + 
-                        " = " + a.label + caracter + b.label + ";\n";
-
-                    // Atualizar tipo da temporária com base nos tipos dos operandos
-                    TIPO_SIMBOLO temp;
-                    temp.nomeVariavel = c.label;
-                    temp.tipoVariavel = "int";
-                    tabelaSimbolos.push_back(temp);
-                }
+    //Condições para converter de Int para Float
+    if (a.tipo == "char" || b.tipo == "char") {
+        yyerror("Erro. Operação inválida!");
+    }
+    if (a.tipo == "int" && b.tipo == "float") {
+        string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+        c.label = geraLabel();
+        c.tipo = "float";
+        c.traducao = a.traducao +  b.traducao + "\t" + tempVar + " = (float)" + a.label + ";\n";
+        c.traducao += "\t" + c.label + " = " + b.label + caracter + tempVar + ";\n";
+        
+        // Atualizar tipo da temporária com base nos tipos dos operandos
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = tempVar + ";\n\t"+ "int" + " " + c.label;
+        temp.escopo = escopoAtual;
+        temp.tipoVariavel = "float";
+        tabelaSimbolos.push_back(temp);
+    } 
+    
+    else if (a.tipo == "float" && b.tipo == "int") {
+        string tempVar = geraLabel(); // Variável temporária para armazenar a conversão
+        c.label = geraLabel();
+        c.tipo = "float";
+        c.traducao =a.traducao +  b.traducao + "\t" + tempVar + " = (float)" + b.label + ";\n";
+        c.traducao += "\t" + c.label + " = " + a.label + caracter + tempVar + ";\n";
+        // Atualizar tipo da temporária com base nos tipos dos operandos
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = tempVar + ";\n\t"+ "int" + " " + c.label;
+        temp.escopo = escopoAtual;
+        temp.tipoVariavel = "float";
+        tabelaSimbolos.push_back(temp);
+    } 
+    
+    else {
+        
+        c.label = geraLabel();
+        c.tipo = a.tipo;
+        c.traducao = a.traducao + b.traducao + "\t" + c.label + 
+            " = " + a.label + caracter + b.label + ";\n";
+        // Atualizar tipo da temporária com base nos tipos dos operandos
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = c.label;
+        temp.escopo = escopoAtual;
+        temp.tipoVariavel = "int";
+        tabelaSimbolos.push_back(temp);
+    }
     return c;
 }
 
 atributos tipoID(atributos a, atributos b,atributos c, string tipo){
     // Adicionar variável temporária na tabela de símbolos
-        TIPO_SIMBOLO temp;
-        temp.nomeVariavel = geraLabel();
-        temp.nomeOriginal = a.label;
-        temp.tipoVariavel = tipo;
-
-        for (int i = 0; i < tabelaSimbolos.size(); i++){
-            if(tabelaSimbolos[i].nomeOriginal == temp.nomeOriginal){
-                yyerror("Variável já declarada");
-            }
-        }
-        tabelaSimbolos.push_back(temp);
+    TIPO_SIMBOLO temp;
+    temp.nomeVariavel = geraLabel();
+    temp.escopo = escopoAtual;
+    temp.nomeOriginal = a.label;
+    temp.tipoVariavel = tipo;
         
+     for(int i = 0; i < tabelaSimbolos.size(); i++)
+	{
+		if(tabelaSimbolos[i].nomeOriginal == temp.nomeOriginal && tabelaSimbolos[i].escopo.top() == escopoAtual.top())
+		{
+			yyerror("Variavel já declarada!");
+		}
+	}
+    tabelaSimbolos.push_back(temp);
+
+    //Conversão int p Float 
+    if(temp.tipoVariavel=="int" && b.tipo =="float")
+	{
+        string tempVar = geraLabel();
+		c.label = geraLabel();
+        c.traducao = b.traducao + "\t" + tempVar + " = (int)"+b.label + ";\n\t" + temp.nomeVariavel + " = " + tempVar + ";\n";
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = tempVar;
+        temp.escopo = escopoAtual;
+        temp.tipoVariavel = "int";
+        tabelaSimbolos.push_back(temp);
+	}
+    //Conversão de Float p Int
+    else if(temp.tipoVariavel=="float" && b.tipo =="int")
+	{
+        string tempVar = geraLabel();
+		c.label = geraLabel();
+        c.traducao = b.traducao + "\t" + tempVar + " = (float)"+b.label + ";\n\t" + temp.nomeVariavel + " = " + tempVar + ";\n";
+        TIPO_SIMBOLO temp;
+        temp.nomeVariavel = tempVar;
+        temp.escopo = escopoAtual;
+        temp.tipoVariavel = "float";
+        tabelaSimbolos.push_back(temp);
+	}
+    else{
         c.tipo = temp.tipoVariavel; // Usar o tipo da variável original
         a.label = temp.nomeOriginal;
         c.traducao = b.traducao + "\t" + temp.nomeVariavel + " = " + b.label + ";\n";
-
-        return c;
+    }
+    return c;
 
 }
 
-void imprimirTabelaDeSimbolos(){
+void imprimirTabelaDeSimbolos()
+{
     for(TIPO_SIMBOLO simbolo: tabelaSimbolos){
         cout<<"\t"+simbolo.tipoVariavel+" "+simbolo.nomeVariavel + ";" <<endl;
     }
