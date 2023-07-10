@@ -1,4 +1,17 @@
-int main()
-{
-  bool x = 1.0;
-}
+int main() {
+    int i;
+    if(i>5){
+        if(10>9){
+            int a = 14;
+        }
+        else if(10==9){
+            int a = 15;
+        }
+        else{
+            int a = 10;
+        }
+    }
+    if(7<3){
+
+    }
+ }

@@ -1,11 +1,12 @@
 %{
 #include <string>
-
 %}
+
 
 ESPACO [ \t]
 DIGITO [0-9]
 LETRA [A-Za-z_]
+ASPAS2 \"
 
 DELIM {ESPACO}+
 NUM {DIGITO}+
@@ -15,7 +16,7 @@ ID {LETRA}({LETRA}|{NUM})*
 OPERADOR("+"|"-"|"*"|"*")
 EXPRESSAO({ID}{NUM})({OPERADOR}({ID}{NUM}))+
 ATRIBUICAO {ID} (=) {EXPRESSAO}
-
+STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$&,.<>^~])+){ASPAS2})
 
 %%
 
@@ -41,11 +42,17 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 
 "for"    {return TK_FOR;}
 
+"break"    {return TK_BREAK;}
+
+"continue"    {return TK_CONTINUE;}
+
 "float"     {return TK_TIPO_FLOAT;}
 
 "bool"      {return TK_TIPO_BOOL;}
 
 "char"      {return TK_TIPO_CHAR;}
+
+"string"    {return TK_TIPO_STRING;}
 
 "(int)"     {return TK_CAST_INT;}
 
@@ -73,6 +80,7 @@ ATRIBUICAO {ID} (=) {EXPRESSAO}
 {REAL}		{ yylval.traducao = yytext; return TK_REAL;}
 {ID}		{ yylval.label = yytext; return TK_ID;}
 {CHAR}      { yylval.traducao = yytext; return TK_CHAR;}
+{STRING}    { yylval.traducao = yytext; return TK_STRING; }
 
 .			{ *yytext; }
 
