@@ -3,6 +3,10 @@
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <string.h>
 
 #define YYSTYPE atributos
 
@@ -10,9 +14,9 @@ using namespace std;
 
 typedef struct 
 {
-    string label;
-    string traducao;
-    string tipo;
+    std::string label;
+    std::string traducao;
+    std::string tipo;
 } atributos; 
 
 typedef struct
@@ -37,6 +41,8 @@ atributos tipoID(atributos a, atributos b,atributos c, string tipo);
 atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
 void insereTabelaDeSimbolos(atributos a,  string tipo);
 void insereID(atributos a,  string tipo);
+void alocaMemoria(atributos &a, int tamanho);
+void liberaMemoria(atributos &a);
 
 /*void printpilhasdeSimbolos()
 {
@@ -202,7 +208,19 @@ COMANDO     : E ';'
 
 E           : E '+' E
             {
+                // Verifica se os operandos são strings
+                if ($1.tipo == "string" && $3.tipo == "string") {
+                 
+                    $$.tipo = "string";
+                    $$.label = geraLabel();
+                    $$.traducao = $1.traducao + $3.traducao;
+                    $$.traducao += "\tchar " + $$.label + "[" + to_string($1.label.size() + $3.label.size() + 1) + "];\n";
+                    $$.traducao += "\tstrcpy(" + $$.label + ", " + $1.label + ");\n";
+                    $$.traducao += "\tstrcat(" + $$.label + ", " + $3.label + ");\n";
+                }
+                else{
                 $$ = converteTipo($1, $3,$$,"+");
+                }
             }
             | E '-' E
             {
@@ -293,11 +311,12 @@ E           : E '+' E
                 // Adicionar variável temporária na tabela de símbolos
                 insereTabelaDeSimbolos($$,"int");
             }
-            | TK_STRING
+             | TK_STRING
             {
                 $$.tipo = "string";
                 $$.label = geraLabel();
-                $$.traducao = "\t" + $$.label + " = "  + $1.traducao + ";\n";
+                $$.traducao = "\tchar " + $$.label + "[" + to_string($1.traducao.size() + 1) + "];\n";
+                $$.traducao += "\tstrcpy(" + $$.label + ", " + $1.traducao + ");\n";
 
                 // Adicionar variável temporária na tabela de símbolos
                 insereTabelaDeSimbolos($$,"string");
@@ -572,6 +591,16 @@ void insereTabelaDeSimbolos(atributos a,string tipo){
     temp.escopo = escopoAtual;
     tabelaSimbolos.push_back(temp);  
 };
+
+void alocaMemoria(atributos &a, int tamanho)
+{
+    a.traducao += "\t" + a.label + " = (" + a.tipo + "*)malloc(sizeof(" + a.tipo + ") * " + to_string(tamanho) + ");\n";
+}
+
+void liberaMemoria(atributos &a)
+{
+    a.traducao += "\tfree(" + a.label + ");\n";
+}
 
 //Inserindo os tokens de ID na tabela de símbolos
 void insereID(atributos a,string tipo){

@@ -104,6 +104,10 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <string.h>
 
 #define YYSTYPE atributos
 
@@ -111,9 +115,9 @@ using namespace std;
 
 typedef struct 
 {
-    string label;
-    string traducao;
-    string tipo;
+    std::string label;
+    std::string traducao;
+    std::string tipo;
 } atributos; 
 
 typedef struct
@@ -138,6 +142,8 @@ atributos tipoID(atributos a, atributos b,atributos c, string tipo);
 atributos converteTipo(atributos a, atributos b, atributos c, string caracter);
 void insereTabelaDeSimbolos(atributos a,  string tipo);
 void insereID(atributos a,  string tipo);
+void alocaMemoria(atributos &a, int tamanho);
+void liberaMemoria(atributos &a);
 
 /*void printpilhasdeSimbolos()
 {
@@ -660,12 +666,12 @@ static const short yyrhs[] = {    21,
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    67,    76,    82,    90,    98,   102,   108,   115,   123,   127,
-   138,   147,   151,   156,   161,   162,   164,   166,   173,   180,
-   187,   194,   203,   207,   211,   215,   219,   225,   230,   235,
-   240,   245,   250,   258,   268,   278,   287,   296,   305,   318,
-   331,   340,   349,   392,   444,   480,   515,   519,   523,   527,
-   531
+    73,    82,    88,    96,   104,   108,   114,   121,   129,   133,
+   144,   153,   157,   162,   167,   168,   170,   172,   179,   186,
+   193,   200,   209,   225,   229,   233,   237,   243,   248,   253,
+   258,   263,   268,   276,   286,   296,   305,   314,   324,   337,
+   350,   359,   368,   411,   463,   499,   534,   538,   542,   546,
+   550
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","TK_NUM","TK_REAL",
@@ -1303,7 +1309,7 @@ YYLABEL(yyreduce)
   switch (yyn) {
 
 case 1:
-#line 68 "sintatica.y"
+#line 74 "sintatica.y"
 {
                 cout << "\n\nXxx---COMPILADOR J.M.B---xxX\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n";
                 imprimirTabelaDeSimbolos();
@@ -1312,14 +1318,14 @@ case 1:
             ;
     break;}
 case 2:
-#line 77 "sintatica.y"
+#line 83 "sintatica.y"
 {
                 yyval.traducao = yyvsp[-2].traducao ;
                 
             ;
     break;}
 case 3:
-#line 83 "sintatica.y"
+#line 89 "sintatica.y"
 {
                 //Diferenciar o número dos blocos
                 numBloco++;
@@ -1328,26 +1334,26 @@ case 3:
             ;
     break;}
 case 4:
-#line 91 "sintatica.y"
+#line 97 "sintatica.y"
 {
                 escopoAtual.pop();
                 yyval.traducao = "";
             ;
     break;}
 case 5:
-#line 99 "sintatica.y"
+#line 105 "sintatica.y"
 {
                 yyval.traducao = yyvsp[-1].traducao + yyvsp[0].traducao;
             ;
     break;}
 case 6:
-#line 103 "sintatica.y"
+#line 109 "sintatica.y"
 {
                 yyval.traducao = "";
             ;
     break;}
 case 7:
-#line 109 "sintatica.y"
+#line 115 "sintatica.y"
 {
                 yyval.label = geraLabel();
                 insereTabelaDeSimbolos(yyval,"int");
@@ -1356,7 +1362,7 @@ case 7:
             ;
     break;}
 case 8:
-#line 116 "sintatica.y"
+#line 122 "sintatica.y"
 {
                 yyval.label = geraLabel();
                 insereTabelaDeSimbolos(yyval,"int");
@@ -1365,13 +1371,13 @@ case 8:
             ;
     break;}
 case 9:
-#line 124 "sintatica.y"
+#line 130 "sintatica.y"
 {
                 yyval.traducao= yyvsp[-2].traducao + "\tIF(!" + yyvsp[-2].label + ") GOTO FIM_ELSE " + to_string(numBloco-1) + ";\n" + yyvsp[0].traducao + "\tFIM_ELSE " + to_string(numBloco-1) + ";\n\n";
             ;
     break;}
 case 10:
-#line 129 "sintatica.y"
+#line 135 "sintatica.y"
 {
                 
                 escopoAtual.push(numBloco);
@@ -1383,7 +1389,7 @@ case 10:
             ;
     break;}
 case 11:
-#line 139 "sintatica.y"
+#line 145 "sintatica.y"
 {
                 yyval.label = geraLabel();
                 string tempVar = geraLabel();
@@ -1393,25 +1399,25 @@ case 11:
             ;
     break;}
 case 12:
-#line 148 "sintatica.y"
+#line 154 "sintatica.y"
 {
                 yyval.traducao = "\tGOTO BLOCO " + to_string(numBloco-1) + ";\n" + yyvsp[-1].traducao + yyvsp[0].traducao;
             ;
     break;}
 case 13:
-#line 153 "sintatica.y"
+#line 159 "sintatica.y"
 {
                 yyval.traducao = "\tGOTO BLOCO " + to_string(numBloco-1) + ";\n" + yyvsp[-1].traducao + yyvsp[0].traducao;
             ;
     break;}
 case 14:
-#line 157 "sintatica.y"
+#line 163 "sintatica.y"
 {
                 yyval.traducao = "";
             ;
     break;}
 case 18:
-#line 167 "sintatica.y"
+#line 173 "sintatica.y"
 {
                 insereID(yyvsp[-1],"int");
 
@@ -1420,7 +1426,7 @@ case 18:
             ;
     break;}
 case 19:
-#line 174 "sintatica.y"
+#line 180 "sintatica.y"
 {
                 insereID(yyvsp[-1],"float");
 
@@ -1429,7 +1435,7 @@ case 19:
             ;
     break;}
 case 20:
-#line 181 "sintatica.y"
+#line 187 "sintatica.y"
 {
                 insereID(yyvsp[-1],"bool");
 
@@ -1438,7 +1444,7 @@ case 20:
             ;
     break;}
 case 21:
-#line 188 "sintatica.y"
+#line 194 "sintatica.y"
 {
                 insereID(yyvsp[-1],"char");
 
@@ -1447,7 +1453,7 @@ case 21:
             ;
     break;}
 case 22:
-#line 195 "sintatica.y"
+#line 201 "sintatica.y"
 {
                 insereID(yyvsp[-1], "string");
 
@@ -1456,31 +1462,43 @@ case 22:
             ;
     break;}
 case 23:
-#line 204 "sintatica.y"
+#line 210 "sintatica.y"
 {
+                // Verifica se os operandos são strings
+                if (yyvsp[-2].tipo == "string" && yyvsp[0].tipo == "string") {
+                 
+                    yyval.tipo = "string";
+                    yyval.label = geraLabel();
+                    yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao;
+                    yyval.traducao += "\tchar " + yyval.label + "[" + to_string(yyvsp[-2].label.size() + yyvsp[0].label.size() + 1) + "];\n";
+                    yyval.traducao += "\tstrcpy(" + yyval.label + ", " + yyvsp[-2].label + ");\n";
+                    yyval.traducao += "\tstrcat(" + yyval.label + ", " + yyvsp[0].label + ");\n";
+                }
+                else{
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"+");
+                }
             ;
     break;}
 case 24:
-#line 208 "sintatica.y"
+#line 226 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"-");
             ;
     break;}
 case 25:
-#line 212 "sintatica.y"
+#line 230 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"*");
             ;
     break;}
 case 26:
-#line 216 "sintatica.y"
+#line 234 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"/");
             ;
     break;}
 case 27:
-#line 220 "sintatica.y"
+#line 238 "sintatica.y"
 {
                yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,">");
                //Convertendo o tipo para Bool nos relacionais para poder fazer comparação com os lógicos
@@ -1488,42 +1506,42 @@ case 27:
             ;
     break;}
 case 28:
-#line 226 "sintatica.y"
+#line 244 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"<");
                 yyval.tipo = "bool";
             ;
     break;}
 case 29:
-#line 231 "sintatica.y"
+#line 249 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,">=");
                 yyval.tipo = "bool";
             ;
     break;}
 case 30:
-#line 236 "sintatica.y"
+#line 254 "sintatica.y"
 {
                yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"<=");
                yyval.tipo = "bool";
             ;
     break;}
 case 31:
-#line 241 "sintatica.y"
+#line 259 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval,"==");
                 yyval.tipo = "bool";
             ;
     break;}
 case 32:
-#line 246 "sintatica.y"
+#line 264 "sintatica.y"
 {
                 yyval = converteTipo(yyvsp[-2], yyvsp[0],yyval," != ");
                 yyval.tipo = "bool";
             ;
     break;}
 case 33:
-#line 251 "sintatica.y"
+#line 269 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool" || yyvsp[0].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1533,7 +1551,7 @@ case 33:
             ;
     break;}
 case 34:
-#line 259 "sintatica.y"
+#line 277 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1545,7 +1563,7 @@ case 34:
             ;
     break;}
 case 35:
-#line 269 "sintatica.y"
+#line 287 "sintatica.y"
 {
                 if (yyvsp[-2].tipo != "bool"){
                     yyerror("ERRO! Operação inválida");
@@ -1557,7 +1575,7 @@ case 35:
             ;
     break;}
 case 36:
-#line 279 "sintatica.y"
+#line 297 "sintatica.y"
 {
                 yyval.tipo = "char";
                 yyval.label = geraLabel();
@@ -1568,7 +1586,7 @@ case 36:
             ;
     break;}
 case 37:
-#line 288 "sintatica.y"
+#line 306 "sintatica.y"
 {
                 yyval.tipo = "bool";
                 yyval.label = geraLabel();
@@ -1579,18 +1597,19 @@ case 37:
             ;
     break;}
 case 38:
-#line 297 "sintatica.y"
+#line 315 "sintatica.y"
 {
                 yyval.tipo = "string";
                 yyval.label = geraLabel();
-                yyval.traducao = "\t" + yyval.label + " = "  + yyvsp[0].traducao + ";\n";
+                yyval.traducao = "\tchar " + yyval.label + "[" + to_string(yyvsp[0].traducao.size() + 1) + "];\n";
+                yyval.traducao += "\tstrcpy(" + yyval.label + ", " + yyvsp[0].traducao + ");\n";
 
                 // Adicionar variável temporária na tabela de símbolos
                 insereTabelaDeSimbolos(yyval,"string");
             ;
     break;}
 case 39:
-#line 306 "sintatica.y"
+#line 325 "sintatica.y"
 {
                 if(yyvsp[0].tipo == "float")
                 {
@@ -1605,7 +1624,7 @@ case 39:
             ;
     break;}
 case 40:
-#line 319 "sintatica.y"
+#line 338 "sintatica.y"
 {
                 if(yyvsp[0].tipo == "int")
                 {
@@ -1620,7 +1639,7 @@ case 40:
             ;
     break;}
 case 41:
-#line 332 "sintatica.y"
+#line 351 "sintatica.y"
 {
                 yyval.tipo = "int";
                 yyval.label = geraLabel();
@@ -1631,7 +1650,7 @@ case 41:
             ;
     break;}
 case 42:
-#line 341 "sintatica.y"
+#line 360 "sintatica.y"
 {
                 yyval.tipo = "float";
                 yyval.label = geraLabel();
@@ -1642,7 +1661,7 @@ case 42:
             ;
     break;}
 case 43:
-#line 350 "sintatica.y"
+#line 369 "sintatica.y"
 {
                 if(yyvsp[0].label == "true" || yyvsp[0].label == "false"){
                     yyval.label = geraLabel();
@@ -1687,7 +1706,7 @@ case 43:
             ;
     break;}
 case 44:
-#line 393 "sintatica.y"
+#line 412 "sintatica.y"
 {
                 bool encontrei = false; 
                 TIPO_SIMBOLO variavel; 
@@ -1741,7 +1760,7 @@ case 44:
             ;
     break;}
 case 45:
-#line 445 "sintatica.y"
+#line 464 "sintatica.y"
 {
             
                 bool encontrei = false; 
@@ -1779,7 +1798,7 @@ case 45:
             ;
     break;}
 case 46:
-#line 481 "sintatica.y"
+#line 500 "sintatica.y"
 {
                 
                 bool encontrei = false; 
@@ -1816,31 +1835,31 @@ case 46:
             ;
     break;}
 case 47:
-#line 516 "sintatica.y"
+#line 535 "sintatica.y"
 {
                 yyval = tipoID(yyvsp[-2], yyvsp[0],yyval,"int");
             ;
     break;}
 case 48:
-#line 520 "sintatica.y"
+#line 539 "sintatica.y"
 {
                 yyval = tipoID(yyvsp[-2], yyvsp[0],yyval,"char");
             ;
     break;}
 case 49:
-#line 524 "sintatica.y"
+#line 543 "sintatica.y"
 {
                 yyval = tipoID(yyvsp[-2], yyvsp[0],yyval,"bool");
             ;
     break;}
 case 50:
-#line 528 "sintatica.y"
+#line 547 "sintatica.y"
 {
                 yyval = tipoID(yyvsp[-2], yyvsp[0],yyval,"string");
             ;
     break;}
 case 51:
-#line 532 "sintatica.y"
+#line 551 "sintatica.y"
 {
                 yyval = tipoID(yyvsp[-2], yyvsp[0],yyval,"float");
             ;
@@ -2049,7 +2068,7 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 537 "sintatica.y"
+#line 556 "sintatica.y"
 
 
 #include "lex.yy.c"
@@ -2088,6 +2107,16 @@ void insereTabelaDeSimbolos(atributos a,string tipo){
     temp.escopo = escopoAtual;
     tabelaSimbolos.push_back(temp);  
 };
+
+void alocaMemoria(atributos &a, int tamanho)
+{
+    a.traducao += "\t" + a.label + " = (" + a.tipo + "*)malloc(sizeof(" + a.tipo + ") * " + to_string(tamanho) + ");\n";
+}
+
+void liberaMemoria(atributos &a)
+{
+    a.traducao += "\tfree(" + a.label + ");\n";
+}
 
 //Inserindo os tokens de ID na tabela de símbolos
 void insereID(atributos a,string tipo){
