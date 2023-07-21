@@ -16,7 +16,7 @@ ID {LETRA}({LETRA}|{NUM})*
 OPERADOR("+"|"-"|"*"|"*")
 EXPRESSAO({ID}{NUM})({OPERADOR}({ID}{NUM}))+
 ATRIBUICAO {ID} (=) {EXPRESSAO}
-STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$&,.<>^~])+){ASPAS2})
+STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$éêãáàèíìóòúùû&,.<>^~])+){ASPAS2})
 
 %%
 
@@ -33,6 +33,14 @@ STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$&,.<>^~])+){ASPAS
 "--"        {return TK_DECREMENTO;}
 
 "if"        {return TK_IF;}
+
+"do"        {return TK_DO;}
+
+"switch"    {return TK_SWITCH;}
+
+"case"      {return TK_CASE;}
+
+"printf"    {return TK_PRINTF;}
 
 "else"      {return TK_ELSE;}
 

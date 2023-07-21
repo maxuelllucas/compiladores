@@ -208,15 +208,19 @@ typedef
 #define	TK_TIPO_FLOAT	277
 #define	TK_TIPO_BOOL	278
 #define	TK_TIPO_CHAR	279
-#define	TK_IF	280
-#define	TK_ELSE	281
-#define	TK_ELSE_IF	282
-#define	TK_WHILE	283
-#define	TK_INCREMENTO	284
-#define	TK_DECREMENTO	285
-#define	TK_FOR	286
-#define	TK_FIM	287
-#define	TK_ERROR	288
+#define	TK_PRINTF	280
+#define	TK_SWITCH	281
+#define	TK_CASE	282
+#define	TK_FIM	283
+#define	TK_ERROR	284
+#define	TK_IF	285
+#define	TK_ELSE	286
+#define	TK_ELSE_IF	287
+#define	TK_WHILE	288
+#define	TK_INCREMENTO	289
+#define	TK_DECREMENTO	290
+#define	TK_FOR	291
+#define	TK_DO	292
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -287,6 +291,11 @@ static const int TK_TIPO_INT;
 static const int TK_TIPO_FLOAT;
 static const int TK_TIPO_BOOL;
 static const int TK_TIPO_CHAR;
+static const int TK_PRINTF;
+static const int TK_SWITCH;
+static const int TK_CASE;
+static const int TK_FIM;
+static const int TK_ERROR;
 static const int TK_IF;
 static const int TK_ELSE;
 static const int TK_ELSE_IF;
@@ -294,8 +303,7 @@ static const int TK_WHILE;
 static const int TK_INCREMENTO;
 static const int TK_DECREMENTO;
 static const int TK_FOR;
-static const int TK_FIM;
-static const int TK_ERROR;
+static const int TK_DO;
 
 
 #line 212 "/usr/share/bison++/bison.h"
@@ -326,15 +334,19 @@ static const int TK_ERROR;
 	,TK_TIPO_FLOAT=277
 	,TK_TIPO_BOOL=278
 	,TK_TIPO_CHAR=279
-	,TK_IF=280
-	,TK_ELSE=281
-	,TK_ELSE_IF=282
-	,TK_WHILE=283
-	,TK_INCREMENTO=284
-	,TK_DECREMENTO=285
-	,TK_FOR=286
-	,TK_FIM=287
-	,TK_ERROR=288
+	,TK_PRINTF=280
+	,TK_SWITCH=281
+	,TK_CASE=282
+	,TK_FIM=283
+	,TK_ERROR=284
+	,TK_IF=285
+	,TK_ELSE=286
+	,TK_ELSE_IF=287
+	,TK_WHILE=288
+	,TK_INCREMENTO=289
+	,TK_DECREMENTO=290
+	,TK_FOR=291
+	,TK_DO=292
 
 
 #line 215 "/usr/share/bison++/bison.h"
