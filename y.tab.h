@@ -208,9 +208,9 @@ typedef
 #define	TK_TIPO_FLOAT	277
 #define	TK_TIPO_BOOL	278
 #define	TK_TIPO_CHAR	279
-#define	TK_PRINTF	280
-#define	TK_SWITCH	281
-#define	TK_CASE	282
+#define	TK_SWITCH	280
+#define	TK_CASE	281
+#define	TK_RETURN	282
 #define	TK_FIM	283
 #define	TK_ERROR	284
 #define	TK_IF	285
@@ -221,6 +221,8 @@ typedef
 #define	TK_DECREMENTO	290
 #define	TK_FOR	291
 #define	TK_DO	292
+#define	TK_COUT	293
+#define	TK_CIN	294
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -291,9 +293,9 @@ static const int TK_TIPO_INT;
 static const int TK_TIPO_FLOAT;
 static const int TK_TIPO_BOOL;
 static const int TK_TIPO_CHAR;
-static const int TK_PRINTF;
 static const int TK_SWITCH;
 static const int TK_CASE;
+static const int TK_RETURN;
 static const int TK_FIM;
 static const int TK_ERROR;
 static const int TK_IF;
@@ -304,6 +306,8 @@ static const int TK_INCREMENTO;
 static const int TK_DECREMENTO;
 static const int TK_FOR;
 static const int TK_DO;
+static const int TK_COUT;
+static const int TK_CIN;
 
 
 #line 212 "/usr/share/bison++/bison.h"
@@ -334,9 +338,9 @@ static const int TK_DO;
 	,TK_TIPO_FLOAT=277
 	,TK_TIPO_BOOL=278
 	,TK_TIPO_CHAR=279
-	,TK_PRINTF=280
-	,TK_SWITCH=281
-	,TK_CASE=282
+	,TK_SWITCH=280
+	,TK_CASE=281
+	,TK_RETURN=282
 	,TK_FIM=283
 	,TK_ERROR=284
 	,TK_IF=285
@@ -347,6 +351,8 @@ static const int TK_DO;
 	,TK_DECREMENTO=290
 	,TK_FOR=291
 	,TK_DO=292
+	,TK_COUT=293
+	,TK_CIN=294
 
 
 #line 215 "/usr/share/bison++/bison.h"

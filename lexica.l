@@ -40,7 +40,6 @@ STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$éêãáàèíì�
 
 "case"      {return TK_CASE;}
 
-"printf"    {return TK_PRINTF;}
 
 "else"      {return TK_ELSE;}
 
@@ -56,11 +55,18 @@ STRING ({ASPAS2}(({LETRA}|{NUM}|{ESPACO}|[(){}[\];,*]|[+\-/=@%$éêãáàèíì�
 
 "float"     {return TK_TIPO_FLOAT;}
 
+
 "bool"      {return TK_TIPO_BOOL;}
 
 "char"      {return TK_TIPO_CHAR;}
 
 "string"    {return TK_TIPO_STRING;}
+
+"cout"     {return TK_COUT;}
+
+"cin"     {return TK_CIN;}
+
+"return"    {return TK_RETURN;}
 
 "(int)"     {return TK_CAST_INT;}
 
